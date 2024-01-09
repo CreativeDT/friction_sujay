@@ -19,17 +19,24 @@ class Home extends StatelessWidget {
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
-                icon: Icon(Icons.menu),
+                icon: Image.asset('assets/icons/menu/menu1.png'),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
               );
             },
           ),
-        title: Container(
+          title: Container(
         width: 180,
         child: Image.asset('assets/icons/logo.png'),
           ),
+          actions: [InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CheckinListView()));
+            },
+              child: Image.asset('assets/icons/plus.png'))],
+
+
         centerTitle: true,
         ),
         // Adding the Drawer for the hamburger menu
@@ -43,7 +50,7 @@ class Home extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     SizedBox(
-                      height: 200,
+                      height: 187,
                       width: double.infinity,
                       child: Image.asset('assets/icons/menu/menubg.png',
                         fit: BoxFit.fill,),
@@ -54,7 +61,7 @@ class Home extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          height: 100,
+                          height: 130,
                           child: Image.asset('assets/icons/menu/profile.png'),
                         ),
                         Text('John Berg',
@@ -77,6 +84,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/activities.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Activities',
                       style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                           fontSize: 14,
@@ -95,6 +103,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/upload.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Upload Histories',
                       style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                     fontSize: 14,
@@ -112,6 +121,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/archive-book.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Amended Histories',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                         fontSize: 14,
@@ -129,6 +139,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/calendar-edit.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Daily Logs',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                         fontSize: 14,
@@ -146,6 +157,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/routing.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Rail Unit locations',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                         fontSize: 14,
@@ -163,6 +175,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/downloads.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Downloads',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                         fontSize: 14,
@@ -180,6 +193,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/note.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Daily Punch Report',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                         fontSize: 14,
@@ -197,6 +211,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/medal-star.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Preferences',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                         fontSize: 14,
@@ -214,6 +229,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/notification.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Send Notifications',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                         fontSize: 14,
@@ -231,6 +247,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/bookmark.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('My Bookmarks',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                         fontSize: 14,
@@ -248,6 +265,7 @@ class Home extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset('assets/icons/menu/logout.png'),
+                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
                   title: Text('Logout',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                         fontSize: 14,

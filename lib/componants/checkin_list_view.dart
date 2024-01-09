@@ -33,6 +33,7 @@ class CheckinListView extends StatelessWidget {
                   
                 ),
                 trailing: Column(
+
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -44,22 +45,33 @@ class CheckinListView extends StatelessWidget {
                         style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1) , fontSize: 14,
               fontWeight: FontWeight.w600, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 10, width: 90,),
                     Image.asset('assets/icons/list/arrowright2.png',alignment: Alignment.bottomRight,)
                   ],
                 ),
                 title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
                 Text('Ronald Peters',
                     style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1) , fontSize: 16,
                     fontWeight: FontWeight.w600, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
                 ),
-                Text('Twin Cities, MN at',
-                    style: TextStyle(color: Color.fromRGBO(109, 109, 109, 1) , fontSize: 14,
-                    fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
-                ),
+            Container(
+                height: 20,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Image.asset('assets/icons/list/pin.png',height: 20,),
+                    Text('Twin Cities, MN at',
+                      style: TextStyle(color: Color.fromRGBO(109, 109, 109, 1) , fontSize: 14,
+                        fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
+                    ),
+                    ],
+                )
+            ),
+
                 Text('4/20/2023 4:40:28 PM',
                     style: TextStyle(color: Color.fromRGBO(109, 109, 109, 1) , fontSize: 14,
                     fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
@@ -67,8 +79,9 @@ class CheckinListView extends StatelessWidget {
                 Container(
                   height: 30,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Image.asset('assets/icons/list/map.png',height: 20,),
                       Image.asset('assets/icons/list/bookmark1.png', height: 20,),

@@ -75,6 +75,7 @@ flutter:
     - assets/icons/planner.png
     - assets/icons/profile.png
     - assets/icons/rising.png
+    - assets/icons/plus.png
     - assets/icons/menu/activities.png
     - assets/icons/menu/archive-book.png
     - assets/icons/menu/bookmark.png
@@ -89,11 +90,13 @@ flutter:
     - assets/icons/menu/profile.png
     - assets/icons/menu/menubg.png
     - assets/icons/menu/Ellipse7.png
+    - assets/icons/menu/menu1.png
     - assets/icons/list/bookmark1.png
     - assets/icons/list/call.png
     - assets/icons/list/map.png
     - assets/icons/list/share1.png
     - assets/icons/list/arrowright2.png
+    - assets/icons/list/pin.png
 
 
 
