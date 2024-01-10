@@ -76,6 +76,8 @@ flutter:
     - assets/icons/profile.png
     - assets/icons/rising.png
     - assets/icons/plus.png
+    - assets/icons/arrowright2.png
+    - assets/icons/notificationEm.png
     - assets/icons/menu/activities.png
     - assets/icons/menu/archive-book.png
     - assets/icons/menu/bookmark.png

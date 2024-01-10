@@ -287,7 +287,7 @@ class Home extends StatelessWidget {
           ),
         ),
         bottomNavigationBar: const BottomAppBar(
-          child: Footer(),
+          child: Footer(tab: 1,)
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
