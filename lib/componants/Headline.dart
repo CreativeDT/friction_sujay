@@ -29,7 +29,7 @@ class Headline extends StatelessWidget {
           ),
         ),
         Container(
-          padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
           height: 24,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
