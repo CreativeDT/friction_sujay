@@ -135,7 +135,7 @@ class Scoreboard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 130,
+                  width: 120,
                 ),
               ],
             ),

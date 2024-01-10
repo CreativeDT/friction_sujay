@@ -30,7 +30,7 @@ class Checkin extends StatelessWidget {
           ),
         ),
         Container(
-          padding: EdgeInsets.fromLTRB(50, 0, 5, 0),
+          padding: EdgeInsets.fromLTRB(45, 0, 0, 0),
           height: 24,
           child: Image.asset('assets/icons/filters.png'),
         ),

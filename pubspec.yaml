@@ -61,42 +61,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/icons/microsoft.png
-    - assets/icons/logo.png
-    - assets/icons/earth.jpg
-    - assets/icons/production.jpg
-    - assets/icons/respons.jpg
-    - assets/icons/speed.jpg
-    - assets/icons/system.jpg
-    - assets/icons/toggle.png
-    - assets/icons/filters.png
-    - assets/icons/fltr.jpg
-    - assets/icons/notifications.png
-    - assets/icons/planner.png
-    - assets/icons/profile.png
-    - assets/icons/rising.png
-    - assets/icons/plus.png
-    - assets/icons/menu/activities.png
-    - assets/icons/menu/archive-book.png
-    - assets/icons/menu/bookmark.png
-    - assets/icons/menu/calendar-edit.png
-    - assets/icons/menu/downloads.png
-    - assets/icons/menu/logout.png
-    - assets/icons/menu/medal-star.png
-    - assets/icons/menu/note.png
-    - assets/icons/menu/notification.png
-    - assets/icons/menu/routing.png
-    - assets/icons/menu/upload.png
-    - assets/icons/menu/profile.png
-    - assets/icons/menu/menubg.png
-    - assets/icons/menu/Ellipse7.png
-    - assets/icons/menu/menu1.png
-    - assets/icons/list/bookmark1.png
-    - assets/icons/list/call.png
-    - assets/icons/list/map.png
-    - assets/icons/list/share1.png
-    - assets/icons/list/arrowright2.png
-    - assets/icons/list/pin.png
+    - assets/icons/
+    - assets/icons/list/
+    - assets/icons/menu/
+    - assets/icons/profile/
 
 
 
@@ -113,6 +81,13 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: WorkSans
+      fonts:
+        - asset: assets/fonts/WorkSans-Regular.ttf
+        - asset: assets/fonts/WorkSans-Italic.ttf
+          style: italic
+        - asset: assets/fonts/WorkSans-Bold.ttf
   # fonts:
   #   - family: Schyler
   #     fonts:
