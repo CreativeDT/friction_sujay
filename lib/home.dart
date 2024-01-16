@@ -4,6 +4,7 @@ import 'package:friction/componants/Headline.dart';
 import 'package:friction/componants/Scoreboard.dart';
 import 'package:friction/componants/Checkin.dart';
 import 'package:friction/componants/Footer.dart';
+import 'package:friction/componants/activity.dart';
 import 'package:friction/componants/checkin_list_view.dart';
 
 class Home extends StatelessWidget {
@@ -32,7 +33,7 @@ class Home extends StatelessWidget {
           ),
           actions: [InkWell(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CheckinListView()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Activity()));
             },
               child: Image.asset('assets/icons/plus.png'))],
 
