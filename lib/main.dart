@@ -10,6 +10,25 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         useMaterial3: false,
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+            gapPadding: 4,
+            borderSide: const BorderSide(color: Colors.blueAccent),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+            gapPadding: 4,
+            borderSide: const BorderSide(color: Colors.red),
+          ),
+        )
       ),
       home: Login(),
     );
