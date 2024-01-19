@@ -6,6 +6,8 @@ import 'package:friction/componants/Checkin.dart';
 import 'package:friction/componants/Footer.dart';
 import 'package:friction/componants/activity.dart';
 import 'package:friction/componants/checkin_list_view.dart';
+import 'package:friction/componants/showActivity.dart';
+import 'package:friction/componants/updateActivity.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -94,6 +96,7 @@ class Home extends StatelessWidget {
                           fontFamily: 'WorkSans'),
                   ),
                   onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => showActivity()));
                     // Handle option 1
                   },
                 ),

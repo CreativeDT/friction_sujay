@@ -16,7 +16,6 @@ class NotificationEm extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(21, 134, 202, 1),
-        leading: Image.asset('assets/icons/arrowright2.png'),
         title: Text('Notifications',
     style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1) , fontSize: 16,
     fontWeight: FontWeight.w700, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),),

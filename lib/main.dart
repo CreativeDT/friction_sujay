@@ -20,12 +20,12 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
-            gapPadding: 4,
+            // gapPadding: 4,
             borderSide: const BorderSide(color: Colors.blueAccent),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
-            gapPadding: 4,
+            // gapPadding: 4,
             borderSide: const BorderSide(color: Colors.red),
           ),
         )
