@@ -3,7 +3,8 @@ import 'package:friction/home.dart';
 
 class Headline extends StatelessWidget {
   final int teamScore;
-  const Headline({super.key, this.teamScore = 0});
+  final int locationScore;
+  const Headline({super.key, this.teamScore = 0, this.locationScore = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class Headline extends StatelessWidget {
               ),
         ),
         teamScore==0?InkWell(
-          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Home(team: 1)));},
+          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Home(team: 1, location: locationScore,)));},
           child: Container(
             padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
             height: 30,
@@ -32,7 +33,7 @@ class Headline extends StatelessWidget {
 
           ),
         ): InkWell(
-          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Home(team: 0)));},
+          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Home(team: 0, location: locationScore,)));},
           child: Container(
             padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
             height: 30,
