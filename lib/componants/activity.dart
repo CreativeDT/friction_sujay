@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:friction/componants/ActivityData.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -14,7 +15,8 @@ import 'package:friction/componants/Footer.dart';
 import 'package:friction/componants/checkin_list_view.dart';
 
 class Activity extends StatelessWidget {
-  const Activity({super.key});
+  ActivityData? activityData;
+   Activity({super.key, this.activityData });
 
   @override
   Widget build(BuildContext context) {

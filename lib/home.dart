@@ -10,7 +10,8 @@ import 'package:friction/componants/showActivity.dart';
 import 'package:friction/componants/updateActivity.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  final int team;
+  const Home({super.key, this.team = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -306,7 +307,7 @@ class Home extends StatelessWidget {
                           children: [
                             Container(
                               padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-                              child: Headline(),
+                              child: team== 1 ? Headline(teamScore: 1) : Headline(teamScore: 0),
                             ),
                             Container(
                               padding: const EdgeInsets.fromLTRB(300, 5, 5, 0),
@@ -314,7 +315,7 @@ class Home extends StatelessWidget {
                             ),
                             Container(
                               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                              child: Scoreboard(),
+                              child: team== 1 ? Scoreboard(teamScore: 1) : Scoreboard(teamScore: 0),
                             ),
                             Container(
                               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),

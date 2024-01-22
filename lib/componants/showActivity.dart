@@ -288,24 +288,7 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
 }
 
 
-class activityData {
-  int _serviceTech=1;
-  int _railLine=1;
 
-  activityData();
-
-  int get serviceTech => _serviceTech;
-
-  set serviceTech(int value) {
-    _serviceTech = value;
-  }
-
-  int get railLine => _railLine;
-
-  set railLine(int value) {
-    _railLine = value;
-  }
-}
 
 
 
