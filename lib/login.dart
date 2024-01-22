@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'package:friction/ApiStrings.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:friction/Strings.dart';
 import 'package:friction/componants/checkin_list_view.dart';
+import 'package:friction/componants/SharedPreference.dart';
 import 'package:friction/home.dart';
 
 class Login extends StatelessWidget {
@@ -10,6 +16,11 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+          elevation: 0,
+        ),
         backgroundColor: const Color.fromRGBO(21, 134, 202, 1),
         body: SingleChildScrollView(
 
@@ -22,8 +33,8 @@ class Login extends StatelessWidget {
                   child: Stack(
                     children: <Widget>[
                       const Positioned(
-                          top: -180,
-                          left: -198,
+                          top: -240,
+                          left: -196,
                         child: HalfWhiteCircle()
                       ),
                       Column(
@@ -31,7 +42,7 @@ class Login extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                              padding: const EdgeInsets.fromLTRB(20, 80, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
                               child: Image.asset('assets/icons/logo.png'),
                             ),
                             Container(
@@ -78,6 +89,9 @@ class Login extends StatelessWidget {
                                   backgroundColor: Colors.white, // background
                                 ),
                                 onPressed: () {
+                                  //fetchDataWithParameters('s');
+                                  loginMicrosoft();
+
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
                                 },
                                 child: Row(
@@ -107,6 +121,63 @@ class Login extends StatelessWidget {
         )
     );
   }
+
+  Future<void> fetchDataWithParameters(String emailT) async {
+    //final String baseUrl = '172.16.116.221:8080';
+    //final String endpoint = '/acetaxi/driver/login';// Replace with your API URL
+    final String apiUrl = 'https://172.16.116.65:8001/api/v1/user/user-login';
+    final Map<String, String> parameters = {
+      "email": "sandeep.kiran@global-csg.com"
+    };
+    final Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    };
+    final Uri uri = Uri.http(ApiStrings.baseUrl, ApiStrings.endpiont_login);
+  //Uri.parse(apiUrl)
+    http.Response response = await http.post(uri, headers: headers,body: jsonEncode(parameters));
+    //final response = await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON data.
+      final data = json.decode(response.body);
+      // Process the data here.
+      print(response.statusCode);
+      print(data);
+      //Fluttertoast.showToast(msg: data);
+    } else {
+      // If the server did not return a 200 OK response, throw an exception or handle the error accordingly.
+      print(response.statusCode);
+      //Fluttertoast.showToast(msg: response.statusCode.toString());
+    }
+  }
+
+  loginMicrosoft() async {
+    //const String API_URL = "http://172.16.116.65:8001/api/v1/user/user-login";
+    final Uri uri = Uri.parse(ApiStrings.baseUrl+ ApiStrings.endpiont_login);
+    const Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+    const Map<String, String> body = {
+      "email": "sandeep.kiran@global-csg.com",
+    };
+    //Uri.parse(API_URL)
+    http.Response response = await http.post(uri,
+        headers: headers, body: jsonEncode(body));
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = json.decode(response.body)["Friction"];
+      print("Response Success");
+      print(response.statusCode);
+      print(data["token"]);
+      SharedPreference().saveStringToSharedPreferences("token", data["token"]);
+
+      print("from shared prefrence: ${SharedPreference().getStringFromSharedPreferences("token")}");
+    } else {
+      print("Response Failure");
+    }
+  }
+
 }
 class HalfWhiteCircle extends StatelessWidget {
   const HalfWhiteCircle({super.key});
