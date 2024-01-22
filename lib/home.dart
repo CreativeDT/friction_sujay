@@ -6,12 +6,14 @@ import 'package:friction/componants/Checkin.dart';
 import 'package:friction/componants/Footer.dart';
 import 'package:friction/componants/activity.dart';
 import 'package:friction/componants/checkin_list_view.dart';
+import 'package:friction/componants/checkin_list_view1.dart';
 import 'package:friction/componants/showActivity.dart';
 import 'package:friction/componants/updateActivity.dart';
 
 class Home extends StatelessWidget {
   final int team;
-  const Home({super.key, this.team = 0});
+  final int location;
+  const Home({super.key, this.team = 0, this.location = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -307,7 +309,7 @@ class Home extends StatelessWidget {
                           children: [
                             Container(
                               padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-                              child: team== 1 ? Headline(teamScore: 1) : Headline(teamScore: 0),
+                              child: team== 1 ? Headline(teamScore: 1,locationScore: location,) : Headline(teamScore: 0, locationScore: location,),
                             ),
                             Container(
                               padding: const EdgeInsets.fromLTRB(300, 5, 5, 0),
@@ -319,7 +321,7 @@ class Home extends StatelessWidget {
                             ),
                             Container(
                               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                              child: Checkin(),
+                              child: location== 1 ? Checkin(teamScore: team,locationScore: 1,): Checkin(teamScore: team, locationScore: 0,),
                             ),
                           ]
                       ),
@@ -329,7 +331,7 @@ class Home extends StatelessWidget {
                 child: Container(
                   width: 400,
                   padding: EdgeInsets.all(5.0),
-                  child: CheckinListView(),
+                  child: location == 1 ? CheckinListView1(): CheckinListView(),
                 ),
               )
             ],

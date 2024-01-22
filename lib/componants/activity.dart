@@ -52,7 +52,6 @@ class MyCustomFormState extends State<MyCustomForm> {
   bool showGreenWidget = false;
   bool showRedWidget = false;
   final _formKey = GlobalKey<FormState>();
-  activityData activitydata = activityData();
 
   @override
   Widget build(BuildContext context) {
@@ -215,7 +214,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       'Accept': 'application/json',
       'Authorization': 'Bearer ${token}'
     };
-    const Map<String, String> body = {
+     Map<String, String> body = {
 
       "estimatedWorkStartDate": "16/03/2024 11:03:10",
       "estimatedWorkEndDate": "16/03/2024 13:03:10",
@@ -375,23 +374,14 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
 }
 
 
-class activityData {
-  int _serviceTech=1;
-  int _railLine=1;
+class ActivityCreationData {
+  String _serviceTech='1';
+  String _railLine='1';
 
-  activityData();
 
-  int get serviceTech => _serviceTech;
+  ActivityCreationData(this._serviceTech, this._railLine);
 
-  set serviceTech(int value) {
-    _serviceTech = value;
-  }
 
-  int get railLine => _railLine;
-
-  set railLine(int value) {
-    _railLine = value;
-  }
 }
 
 
