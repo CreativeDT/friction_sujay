@@ -20,12 +20,25 @@ class ActivityData {
   // Default values for parameters in the constructor
   ActivityData({this.ActivityTypeSerialId = '96589',
                   this.ServiceTechEmail = 'james.j.gantzer@loram.com',
-                  this.ActivityId = 1});
+                  this.ActivityId = 1,
+                  this.EstimatedWorkStartDate = "",
+                  this.EstimatedWorkEndDate = "",
+                  this.ActualWorkStartDate = "",
+                  this.ActualWorkEndDate = "",
+                  this.ActualWorkStartLat = "",
+                  this.ActualWorkStartLong ="",
+  });
 
   factory ActivityData.fromJson(Map map) => ActivityData(
       ActivityId: map["ActivityId"],
       ActivityTypeSerialId: map["ActivityTypeSerialId"],
-      ServiceTechEmail: map["ServiceTechEmail"]
+      ServiceTechEmail: map["ServiceTechEmail"],
+      EstimatedWorkStartDate: map["EstimatedWorkStartDate"],
+      EstimatedWorkEndDate: map["EstimatedWorkEndDate"],
+      ActualWorkStartDate: map["ActualWorkStartDate"],
+      ActualWorkEndDate: map["ActualWorkEndDate"],
+      ActualWorkStartLat: map["ActualWorkStartLat"],
+      ActualWorkStartLong: map["ActualWorkStartLong"]
   );
 
   @override
