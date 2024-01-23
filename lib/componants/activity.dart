@@ -39,6 +39,12 @@ class Activity extends StatelessWidget {
   }
 }
 
+String  serviceTechId = "1";
+String railUnitLocationId = "1";
+String activityTypeId = "1";
+String activityStatusId = "1";
+String createdById = "1";
+
 class MyCustomForm extends StatefulWidget {
   const MyCustomForm({super.key});
 
@@ -52,6 +58,8 @@ class MyCustomFormState extends State<MyCustomForm> {
   bool showGreenWidget = false;
   bool showRedWidget = false;
   final _formKey = GlobalKey<FormState>();
+  //TextEditingController serviceTechIdController = TextEditingController();
+ // TextEditingController railUnitLocationIdController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -132,8 +140,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                                   if (_formKey.currentState!.validate()) {
                                     createActivity();
                                     setState(() {
-                                      showGreenWidget = true;
-                                      showRedWidget = false;
+                                      //showGreenWidget = true;
+                                     // showRedWidget = false;
                                     });
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text('Processing Data')),
@@ -215,7 +223,6 @@ class MyCustomFormState extends State<MyCustomForm> {
       'Authorization': 'Bearer ${token}'
     };
      Map<String, String> body = {
-
       "estimatedWorkStartDate": "16/03/2024 11:03:10",
       "estimatedWorkEndDate": "16/03/2024 13:03:10",
       "actualWorkStartDate": "16/03/2024 11:03:10",
@@ -227,8 +234,8 @@ class MyCustomFormState extends State<MyCustomForm> {
       "truckId": "1245",
       "mileageStart": "4321",
       "mileageEnd": "4521",
-      "serviceTechId": "1",
-      "railUnitLocationId": "1",
+      "serviceTechId": serviceTechId,
+      "railUnitLocationId": railUnitLocationId,
       "activityTypeId": "1",
       "activityStatusId": "1",
       "createdById": "1"
@@ -236,12 +243,14 @@ class MyCustomFormState extends State<MyCustomForm> {
     //Uri.parse(API_URL)
     http.Response response = await http.post(uri,
         headers: headers, body: jsonEncode(body));
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
+      print("Body --- ${body}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
       final data = json.decode(response.body)["Friction"];
       print("Response Success");
       print(response.statusCode);
       print(data["message"]);
+      print(data["data"]);
+      SharedPreference().saveStringToSharedPreferences("activityId", data["data"]["ActivityTypeSerialId"]);
       setState(() {
         showGreenWidget = true;
       });
@@ -352,7 +361,10 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
             onSelected: (String value) {
               _typeAheadController.text = value;
               if(widget.ldText == 'Select Service Tech*'){
-
+                serviceTechId = _typeAheadController.text;
+              }
+              if(widget.ldText == 'Select Rail Line'){
+                railUnitLocationId = _typeAheadController.text;
               }
               setState(() {});
 
@@ -364,6 +376,7 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
                 '3',
                 '4',
                 '5',
+                'a'
               ];
             },
           )

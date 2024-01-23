@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:friction/componants/ActivityData.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -14,8 +15,8 @@ import 'package:friction/componants/Footer.dart';
 import 'package:friction/componants/checkin_list_view.dart';
 
 class updateActivity extends StatelessWidget {
-  const updateActivity({super.key});
-
+  final ActivityData data;
+  const updateActivity({super.key, required this.data});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +32,15 @@ class updateActivity extends StatelessWidget {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-          child: MyCustomForm()
+          child: MyCustomForm(dataForm: data,)
       ),
     );
   }
 }
-
+//ActivityData lastData = ActivityData();
 class MyCustomForm extends StatefulWidget {
-   MyCustomForm({super.key,});
+  final ActivityData dataForm;
+   const MyCustomForm({super.key, required this.dataForm});
 
   @override
   MyCustomFormState createState() {
@@ -50,8 +52,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   bool showBlueWidget = false;
   bool showRedWidget = false;
   final _formKey = GlobalKey<FormState>();
-  activityData activitydata = activityData();
-
+  //activityData activitydata = activityData();
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +85,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        InputDropDownItem(hdText: '',
+                        InputDropDownItem(hdText: widget.dataForm.ServiceTechEmail,
                           ldText: 'Select Service Tech*',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
@@ -130,10 +131,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                             ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  createActivity();
+                                  updateActivity();
                                   setState(() {
-                                    showBlueWidget = true;
-                                    showRedWidget = false;
+                                    //showBlueWidget = true;
+                                    //showRedWidget = false;
                                   });
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('Processing Data')),
@@ -202,23 +203,24 @@ class MyCustomFormState extends State<MyCustomForm> {
     );
   }
 
-  createActivity() async {
+  updateActivity() async {
     String? token = await SharedPreference().getStringFromSharedPreferences("token");
     print(token);
     //const String tocken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbmRlZXAua2lyYW5AZ2xvYmFsLWNzZy5jb20iLCJpYXQiOjE3MDU1NjA5NzN9.jVqyyJw6gcLJJCS554HwOHOAPtfZ1Ve3jnv5LMEnNEQ";
     //const String API_URL = "http://172.16.116.65:8001/api/v1/user/user-login";
-    final Uri uri = Uri.parse(ApiStrings.baseUrl+ ApiStrings.endpoint_create_activity);
+    final Uri uri = Uri.parse(ApiStrings.baseUrl+ ApiStrings.endpoint_update_activity);
     Map<String, String> headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer ${token}'
     };
-    const Map<String, String> body = {
-
-      "estimatedWorkStartDate": "16/03/2024 11:03:10",
-      "estimatedWorkEndDate": "16/03/2024 13:03:10",
-      "actualWorkStartDate": "16/03/2024 11:03:10",
-      "actualWorkEndDate": "16/03/2024 13:03:10",
+    const Map<String, dynamic> body = {
+      "activityId": 1,
+      "estimatedWorkStartDate": "12/03/2023 11:03:10",
+      "estimatedWorkEndDate": "13/03/2023 13:03:10",
+      "actualWorkStartDate": "12/03/2023 11:03:10",
+      "actualWorkEndDate": "13/03/2023 13:03:10",
+      "isAmended": true,
       "actualWorkStartLat": "41.74585",
       "actualWorkStartLong": "-88.34061",
       "actualEndWorkLat": "-88.34061",
@@ -233,7 +235,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       "createdById": "1"
     };
     //Uri.parse(API_URL)
-    http.Response response = await http.post(uri,
+    http.Response response = await http.put(uri,
         headers: headers, body: jsonEncode(body));
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -245,6 +247,7 @@ class MyCustomFormState extends State<MyCustomForm> {
         showBlueWidget = true;
       });
     } else {
+      print(response.statusCode);
       print("Response Failure");
       setState(() {
         showRedWidget = true;
@@ -294,6 +297,7 @@ class InputDropDownItem extends StatefulWidget {
 
   InputDropDownItem({super.key, required this.hdText, required this.ldText, required this.sdIconPath});
 
+
   @override
   State<InputDropDownItem> createState() => _InputDropDownItemState();
 }
@@ -302,7 +306,13 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _typeAheadController = TextEditingController();
-
+  @override
+  void initState() {
+    if(widget.ldText == 'Select Service Tech*') {
+      _typeAheadController.text = widget.hdText;
+    }
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
