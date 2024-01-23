@@ -176,7 +176,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                       //color: Colors.green,
                       child: Center(
                         child: Text('Activity created successfully, '
-                            'please refer Activity list to start work'),
+                            'please refer Activity list to start work',
+                            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1) , fontSize: 12,
+                              fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',)),
                       ),
                     ),
                   ),
@@ -198,7 +200,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                         color: Colors.redAccent
                       ),
                       child: Center(
-                        child: Text('Selected Helper is deleted Succesfully'),
+                        child: Text('Failed to create Activity, Please Try Again',
+                            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1) , fontSize: 12,
+                              fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',)),
                       ),
                     ),
                   ),
