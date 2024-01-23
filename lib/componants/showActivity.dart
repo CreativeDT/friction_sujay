@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:friction/componants/ActivityData.dart';
 import 'package:friction/componants/updateActivity.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
@@ -36,6 +37,14 @@ class showActivity extends StatelessWidget {
   }
 }
 
+List<ActivityData> activityDataList = [];
+String? lastCreatedActivityId = "10036";
+    //await SharedPreference().getStringFromSharedPreferences("token");
+String lastCreatedServiceId = "";
+String lastCreatedActivityEmail = "";
+ActivityData dataToPass = ActivityData();
+
+
 class MyCustomForm extends StatefulWidget {
   const MyCustomForm({super.key});
 
@@ -49,7 +58,17 @@ class MyCustomFormState extends State<MyCustomForm> {
   bool showBlueWidget = false;
   bool showRedWidget = false;
   final _formKey = GlobalKey<FormState>();
-  activityData activitydata = activityData();
+  //activityData activitydata = activityData();
+
+  @override
+  void initState() {
+    setActivity();
+    showActivity();
+    super.initState();
+  }
+  setActivity() async {
+     lastCreatedActivityId = await SharedPreference().getStringFromSharedPreferences("activityId");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,38 +94,23 @@ class MyCustomFormState extends State<MyCustomForm> {
       );
   }
 
-  showActivityActivity() async {
+  showActivity() async {
     String? token = await SharedPreference().getStringFromSharedPreferences("token");
     print(token);
     //const String tocken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbmRlZXAua2lyYW5AZ2xvYmFsLWNzZy5jb20iLCJpYXQiOjE3MDU1NjA5NzN9.jVqyyJw6gcLJJCS554HwOHOAPtfZ1Ve3jnv5LMEnNEQ";
     //const String API_URL = "http://172.16.116.65:8001/api/v1/user/user-login";
-    final Uri uri = Uri.parse(ApiStrings.baseUrl+ ApiStrings.endpoint_create_activity);
+    final Uri uri = Uri.parse(ApiStrings.baseUrl+ ApiStrings.endpoint_get_all_activity);
     Map<String, String> headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer ${token}'
     };
-    const Map<String, String> body = {
-
-      "estimatedWorkStartDate": "16/03/2024 11:03:10",
-      "estimatedWorkEndDate": "16/03/2024 13:03:10",
-      "actualWorkStartDate": "16/03/2024 11:03:10",
-      "actualWorkEndDate": "16/03/2024 13:03:10",
-      "actualWorkStartLat": "41.74585",
-      "actualWorkStartLong": "-88.34061",
-      "actualEndWorkLat": "-88.34061",
-      "actualWorkEndLong": "-88.34061",
-      "truckId": "1245",
-      "mileageStart": "4321",
-      "mileageEnd": "4521",
-      "serviceTechId": "1",
-      "railUnitLocationId": "1",
-      "activityTypeId": "1",
-      "activityStatusId": "1",
-      "createdById": "1"
+    const Map<String, dynamic> body = {
+      "pageNumber": 1,
+      "limit": 100
     };
     //Uri.parse(API_URL)
-    http.Response response = await http.post(uri,
+    http.Response response = await http.put(uri,
         headers: headers, body: jsonEncode(body));
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -114,6 +118,27 @@ class MyCustomFormState extends State<MyCustomForm> {
       print("Response Success");
       print(response.statusCode);
       print(data["message"]);
+      //print(data["data"]);
+      //print(data[0]);
+
+      for(var data in data["data"]){
+        activityDataList.add(ActivityData.fromJson(data));
+      }
+      //print(activityDataList.toString());
+      for(var data in activityDataList) {
+        if(lastCreatedActivityId != null) {
+          if (data.ActivityTypeSerialId == lastCreatedActivityId) {
+            lastCreatedServiceId = data.ActivityTypeSerialId;
+            lastCreatedActivityEmail = data.ServiceTechEmail;
+            dataToPass = data;
+          }
+        }
+        print("activityData:" + data.toString() );
+      }
+      /*{
+        lastCreatedServiceId = activityDataList[0].ActivityTypeSerialId;
+        lastCreatedActivityEmail = activityDataList[0].ServiceTechEmail;
+      }*/
       setState(() {
         showBlueWidget = true;
       });
@@ -135,7 +160,7 @@ class ActivityItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => updateActivity()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => updateActivity(data: dataToPass,)));
       },
       child: Card(
           elevation: 10,
@@ -168,13 +193,15 @@ class ActivityItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(idText,
+                    Text(lastCreatedServiceId.isNotEmpty ? lastCreatedServiceId :
+                      idText,
                       style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1) , fontSize: 14,
                         fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),),
                     SizedBox(
                       height: 10,
                     ),
-                    Text(serviceText,
+                    Text(lastCreatedActivityEmail.isNotEmpty ? lastCreatedActivityEmail :
+                      serviceText,
                       style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1) , fontSize: 12,
                         fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),),
 
