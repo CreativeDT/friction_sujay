@@ -186,7 +186,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                     height: 40,
                     //color: Colors.green,
                     child: Center(
-                      child: Text('Activity ID- ${dataToPass.ActivityTypeSerialId} updated successfully.'),
+                      child: Text('Activity ID- ${dataToPass.ActivityTypeSerialId} updated successfully.',
+                          style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1) , fontSize: 12,
+                            fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',)),
                     ),
                   ),
                 ),
@@ -208,7 +210,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                         color: Colors.redAccent
                     ),
                     child: Center(
-                      child: Text('Activity ID- ${dataToPass.ActivityTypeSerialId} update failed.'),
+                      child: Text('Activity ID- ${dataToPass.ActivityTypeSerialId} update failed.',
+                          style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1) , fontSize: 12,
+                            fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',)),
                     ),
                   ),
                 ),
