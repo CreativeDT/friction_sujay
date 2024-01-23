@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friction/componants/ActivityData.dart';
+import 'package:friction/componants/showActivity.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -38,6 +39,7 @@ class updateActivity extends StatelessWidget {
   }
 }
 //ActivityData lastData = ActivityData();
+String railUnitLocationId = "1";
 class MyCustomForm extends StatefulWidget {
   final ActivityData dataForm;
    const MyCustomForm({super.key, required this.dataForm});
@@ -85,16 +87,32 @@ class MyCustomFormState extends State<MyCustomForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        InputDropDownItem(hdText: widget.dataForm.ServiceTechEmail,
+                        InputDropDownItem(hdText: widget.dataForm.ActivityTypeSerialId,
                           ldText: 'Select Service Tech*',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: '',
+                        InputDropDownItem(hdText: widget.dataForm.EstimatedWorkStartDate,
                           ldText: 'Select Work Start Date',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: '',
+                        InputDropDownItem(hdText: widget.dataForm.EstimatedWorkEndDate,
                           ldText: 'Select Work End Date Range',
+                          sdIconPath: 'assets/icons/profile/down.png',
+                        ),
+                        InputDropDownItem(hdText: widget.dataForm.ActualWorkStartDate,
+                          ldText: 'Actual Work Start Date',
+                          sdIconPath: 'assets/icons/profile/down.png',
+                        ),
+                        InputDropDownItem(hdText: widget.dataForm.ActualWorkEndDate,
+                          ldText: 'Actual Work End Date',
+                          sdIconPath: 'assets/icons/profile/down.png',
+                        ),
+                        InputDropDownItem(hdText: widget.dataForm.ActualWorkStartLat,
+                          ldText: 'Actual Work Start Lat',
+                          sdIconPath: 'assets/icons/profile/down.png',
+                        ),
+                        InputDropDownItem(hdText: widget.dataForm.ActualWorkStartLong,
+                          ldText: 'Actual Work Start Long',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
                         InputDropDownItem(hdText: '',
@@ -136,9 +154,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                                     //showBlueWidget = true;
                                     //showRedWidget = false;
                                   });
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  /*ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('Processing Data')),
-                                  );
+                                  );*/
                                 }
                               },
                               child: const Text('Update Activity'),
@@ -168,7 +186,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     height: 40,
                     //color: Colors.green,
                     child: Center(
-                      child: Text('Activity ID- 96705 updated successfully.'),
+                      child: Text('Activity ID- ${dataToPass.ActivityTypeSerialId} updated successfully.'),
                     ),
                   ),
                 ),
@@ -190,7 +208,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                         color: Colors.redAccent
                     ),
                     child: Center(
-                      child: Text('Selected Helper is deleted Succesfully'),
+                      child: Text('Activity ID- ${dataToPass.ActivityTypeSerialId} update failed.'),
                     ),
                   ),
                 ),
@@ -214,7 +232,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       'Accept': 'application/json',
       'Authorization': 'Bearer ${token}'
     };
-    const Map<String, dynamic> body = {
+     Map<String, dynamic> body = {
       "activityId": 1,
       "estimatedWorkStartDate": "12/03/2023 11:03:10",
       "estimatedWorkEndDate": "13/03/2023 13:03:10",
@@ -229,7 +247,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       "mileageStart": "4321",
       "mileageEnd": "4521",
       "serviceTechId": "1",
-      "railUnitLocationId": "1",
+      "railUnitLocationId": railUnitLocationId,
       "activityTypeId": "1",
       "activityStatusId": "1",
       "createdById": "1"
@@ -308,9 +326,10 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
   final TextEditingController _typeAheadController = TextEditingController();
   @override
   void initState() {
-    if(widget.ldText == 'Select Service Tech*') {
+    _typeAheadController.text = widget.hdText;
+    /*if(widget.ldText == 'Select Service Tech*') {
       _typeAheadController.text = widget.hdText;
-    }
+    }*/
     super.initState();
   }
   @override
@@ -360,6 +379,9 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
           },
           onSelected: (String value) {
             _typeAheadController.text = value;
+            if(widget.ldText == 'Select Rail Line'){
+              railUnitLocationId = _typeAheadController.text;
+            }
             // if(widget.ldText == 'Select Service Tech*'){
             //   _typeAheadController.text = 'james.j.gantzer@loram.com';
             //
@@ -375,6 +397,7 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
               '3',
               '4',
               '5',
+              'a'
             ];
           },
         )
