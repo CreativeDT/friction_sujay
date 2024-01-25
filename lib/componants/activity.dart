@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:friction/componants/ActivityData.dart';
 import 'package:intl/intl.dart';
@@ -137,15 +139,16 @@ class MyCustomFormState extends State<MyCustomForm> {
 
                               ElevatedButton(
                                 onPressed: () {
+                                  showGreenWidget = false;
+                                  showRedWidget = false;
                                   if (_formKey.currentState!.validate()) {
                                     createActivity();
                                     setState(() {
-                                      //showGreenWidget = true;
-                                     // showRedWidget = false;
+
                                     });
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    /*ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text('Processing Data')),
-                                    );
+                                    );*/
                                   }
                                 },
                                 child: const Text('Create Activity'),
@@ -301,6 +304,8 @@ class InputItem extends StatelessWidget {
   }
 }
 
+List<String> suggestionList = [];
+
 class InputDropDownItem extends StatefulWidget {
   final String hdText;
   final String ldText;
@@ -374,19 +379,78 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
 
             },
             suggestionsCallback: (String search) {
-              return [
-                '1',
-                '2',
-                '3',
-                '4',
-                '5',
-                'a'
-              ];
+          List<String> suggestions = createSuggestion(widget.ldText);
+          //List<String> suggestions = fetchSuggestion(widget.ldText);
+          removeSuggestion();
+              return suggestions;
+              /*['1','2','3','4','5','a'];*/
             },
           )
 
 
     );
+  }
+}
+
+createSuggestion (String ltext){
+  int n = 5;
+  if(ltext == 'Select Service Tech*') {
+    n = 10;
+  }
+  if(ltext == 'Activity Type Id*') {
+    n = 7;
+  }
+  if(ltext == 'Select Rail Line') {
+    n = 3;
+  }
+    for (var i = 1; i <= n; i++) {
+      suggestionList.add(i.toString());
+    }
+  if(ltext == 'Select Rail Line') {
+    suggestionList.add("a");
+  }
+
+  return suggestionList;
+
+}
+removeSuggestion (){
+  suggestionList = [];
+}
+fetchSuggestion (String ltext) async {
+  String? token = await SharedPreference().getStringFromSharedPreferences(
+      "token");
+  String endpoint_suggestion = "";
+         // endpoint_suggestion = ApiStrings.endpoint_get_all_activity;
+  if(ltext.isNotEmpty){
+    switch(ltext) {
+      case 'Select Service Tech*':
+        endpoint_suggestion = ApiStrings.endpoint_get_all_service_techs;
+        break;
+      case 'Select Rail Line':
+        endpoint_suggestion = ApiStrings.endpoint_get_all_rail_location;
+    }
+  }
+
+  final Uri uri = Uri.parse(
+      ApiStrings.baseUrl + endpoint_suggestion);
+  Map<String, String> headers = {
+    'Content-type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': 'Bearer ${token}'
+  };
+
+  http.Response response = await http.get(uri,
+      headers: headers,);
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    final data = json.decode(response.body)["Friction"];
+    print("Response Success");
+    print(response.statusCode);
+    print(data["message"]);
+    print(data["data"]);
+
+    //suggestionList.addAll(data["data"]);
+  } else {
+    print("Response Failure");
   }
 }
 

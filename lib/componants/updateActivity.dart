@@ -148,11 +148,12 @@ class MyCustomFormState extends State<MyCustomForm> {
 
                             ElevatedButton(
                               onPressed: () {
+                                showBlueWidget = false;
+                                showRedWidget = false;
                                 if (_formKey.currentState!.validate()) {
                                   updateActivity();
                                   setState(() {
-                                    //showBlueWidget = true;
-                                    //showRedWidget = false;
+
                                   });
                                   /*ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('Processing Data')),
@@ -399,8 +400,6 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
               '1',
               '2',
               '3',
-              '4',
-              '5',
               'a'
             ];
           },
