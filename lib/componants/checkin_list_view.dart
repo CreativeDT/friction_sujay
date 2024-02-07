@@ -12,11 +12,11 @@ class CheckinListView extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return Card(
             elevation: 5,
-            margin: EdgeInsets.fromLTRB(5, 10, 5, 10),
+            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: ListTile(
               dense: true,
                 visualDensity: VisualDensity(vertical: 4),
-                minLeadingWidth: 60,
+                minLeadingWidth: 50,
                 leading: Container(
                   //color: Colors.red,
                   child: Stack(
@@ -30,24 +30,26 @@ class CheckinListView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
-                ),
-                trailing: Column(
 
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text('Estd Time',
-                  style: TextStyle(color: Color.fromRGBO(109, 109, 109, 1) , fontSize: 12,
-                    fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
-                    ),
-                    Text('60 Mins',
-                        style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1) , fontSize: 14,
-              fontWeight: FontWeight.w600, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
-                    ),
-                    SizedBox(height: 10, width: 90,),
-                    Image.asset('assets/icons/list/arrowright2.png',alignment: Alignment.bottomRight,)
-                  ],
+                ),
+                trailing: Container(
+                  child: Column(
+
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text('Estd Time',
+                    style: TextStyle(color: Color.fromRGBO(109, 109, 109, 1) , fontSize: 12,
+                      fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
+                      ),
+                      Text('60 Mins',
+                          style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1) , fontSize: 14,
+                                  fontWeight: FontWeight.w600, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
+                      ),
+                      SizedBox(height: 10, width: 10,),
+                      Image.asset('assets/icons/list/arrowright2.png',alignment: Alignment.bottomRight,)
+                    ],
+                  ),
                 ),
                 title: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

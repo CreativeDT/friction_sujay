@@ -5,16 +5,43 @@ import 'package:friction/componants/Scoreboard.dart';
 import 'package:friction/componants/Checkin.dart';
 import 'package:friction/componants/Footer.dart';
 import 'package:friction/componants/activity.dart';
+import 'package:friction/componants/amendedHistory.dart';
 import 'package:friction/componants/checkin_list_view.dart';
 import 'package:friction/componants/checkin_list_view1.dart';
+import 'package:friction/componants/dailyLogs.dart';
+import 'package:friction/componants/downloadPage.dart';
+import 'package:friction/componants/railUnits.dart';
 import 'package:friction/componants/showActivity.dart';
 import 'package:friction/componants/updateActivity.dart';
+import 'package:friction/componants/uploadHistory.dart';
+import 'package:friction/data/ApiService.dart';
+import 'package:friction/data/model/UserProfile.dart';
 
-class Home extends StatelessWidget {
+import 'componants/testPage.dart';
+
+class Home extends StatefulWidget {
   final int team;
   final int location;
   const Home({super.key, this.team = 0, this.location = 0});
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+final ApiService apiService = ApiService();
+UserProfile userProfile = UserProfile();
+String userName = "Jhon Berg";
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    apiService.getUserProfile().then((data){
+      userProfile= UserProfile.fromJson(data);
+      setState(() {
+        userName = userProfile.FirstName!;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +97,7 @@ class Home extends StatelessWidget {
                           height: 130,
                           child: Image.asset('assets/icons/menu/profile.png'),
                         ),
-                        Text('John Berg',
+                        Text(userName,
                           style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1),
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -119,6 +146,7 @@ class Home extends StatelessWidget {
                     fontFamily: 'WorkSans'),),
                   onTap: () {
                     // Handle option 2
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => uploadHistory()));
                   },
                 ),
                 Container(
@@ -136,7 +164,8 @@ class Home extends StatelessWidget {
                         letterSpacing: 1,
                         fontFamily: 'WorkSans'),),
                   onTap: () {
-                    // Handle option 2
+                    // Handle option 3
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => amendedHistory()));
                   },
                 ),
                 Container(
@@ -154,7 +183,8 @@ class Home extends StatelessWidget {
                         letterSpacing: 1,
                         fontFamily: 'WorkSans'),),
                   onTap: () {
-                    // Handle option 2
+                    // Handle option 4
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => dailyLogs()));
                   },
                 ),
                 Container(
@@ -172,7 +202,9 @@ class Home extends StatelessWidget {
                         letterSpacing: 1,
                         fontFamily: 'WorkSans'),),
                   onTap: () {
-                    // Handle option 2
+                    // Handle option 6
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => railUnits()));
+
                   },
                 ),
                 Container(
@@ -190,7 +222,8 @@ class Home extends StatelessWidget {
                         letterSpacing: 1,
                         fontFamily: 'WorkSans'),),
                   onTap: () {
-                    // Handle option 2
+                    // Handle option 6
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => downloadPage()));
                   },
                 ),
                 Container(
@@ -280,7 +313,8 @@ class Home extends StatelessWidget {
                         letterSpacing: 1,
                         fontFamily: 'WorkSans'),),
                   onTap: () {
-                    // Handle option 2
+                    // Handle option logout
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => testPage()));
                   },
                 ),
                 Container(
@@ -309,29 +343,46 @@ class Home extends StatelessWidget {
                           children: [
                             Container(
                               padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-                              child: team== 1 ? Headline(teamScore: 1,locationScore: location,) : Headline(teamScore: 0, locationScore: location,),
+                              child: widget.team== 1 ? Headline(teamScore: 1,locationScore: widget.location,) : Headline(teamScore: 0, locationScore: widget.location,),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(left: 200),
+                                  padding: const EdgeInsets.fromLTRB(100, 5, 0, 0),
+                                  child: Image.asset('assets/icons/filters.png'),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                                  child: widget.team== 1 ? Scoreboard(teamScore: 1) : Scoreboard(teamScore: 0),
+                                ),
+                              ],
                             ),
                             Container(
-                              padding: const EdgeInsets.fromLTRB(300, 5, 5, 0),
-                              child: Image.asset('assets/icons/filters.png'),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                              child: team== 1 ? Scoreboard(teamScore: 1) : Scoreboard(teamScore: 0),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                              child: location== 1 ? Checkin(teamScore: team,locationScore: 1,): Checkin(teamScore: team, locationScore: 0,),
+                              padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                              child: widget.location== 1 ? Checkin(teamScore: widget.team,locationScore: 1,): Checkin(teamScore: widget.team, locationScore: 0,),
                             ),
                           ]
                       ),
                   )
               ),
               Expanded(
-                child: Container(
-                  width: 400,
-                  padding: EdgeInsets.all(5.0),
-                  child: location == 1 ? CheckinListView1(): CheckinListView(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 380,
+                      padding: EdgeInsets.all(5.0),
+                      child: widget.location == 1 ? CheckinListView1(): CheckinListView(),
+                    ),
+                  ],
                 ),
               )
             ],

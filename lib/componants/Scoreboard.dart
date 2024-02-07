@@ -8,7 +8,7 @@ class Scoreboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 400,
+      width: 380,
         height: 230,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
