@@ -29,6 +29,10 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   toggle_switch: ^2.1.0
+  ffi: ^2.1.0
+  csv: ^5.1.1
+  path_provider: ^2.1.2
+  omni_datetime_picker: ^1.0.9
   flutter:
     sdk: flutter
 
@@ -37,11 +41,13 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   http: ^1.1.0
-  intl: ^0.17.0
+  intl: ^0.19.0
   shared_preferences: ^2.0.12
-  flutter_typeahead: ^5.0.2
+  flutter_typeahead: ^5.1.0
+  #flutter_datetime_picker: ^2.1.0
 
 dev_dependencies:
+  ffi: ^2.0.1
   flutter_test:
     sdk: flutter
 

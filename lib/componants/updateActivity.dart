@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:friction/componants/ActivityData.dart';
 import 'package:friction/componants/showActivity.dart';
@@ -87,31 +89,31 @@ class MyCustomFormState extends State<MyCustomForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        InputDropDownItem(hdText: widget.dataForm.ActivityTypeSerialId,
+                        InputDropDownItem(hdText: widget.dataForm.ActivityTypeSerialId!,
                           ldText: 'Select Service Tech*',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: widget.dataForm.EstimatedWorkStartDate,
+                        InputDropDownItem(hdText: widget.dataForm.EstimatedWorkStartDate!,
                           ldText: 'Select Work Start Date',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: widget.dataForm.EstimatedWorkEndDate,
+                        InputDropDownItem(hdText: widget.dataForm.EstimatedWorkEndDate!,
                           ldText: 'Select Work End Date Range',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: widget.dataForm.ActualWorkStartDate,
+                        InputDropDownItem(hdText: widget.dataForm.ActualWorkStartDate!,
                           ldText: 'Actual Work Start Date',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: widget.dataForm.ActualWorkEndDate,
+                        InputDropDownItem(hdText: widget.dataForm.ActualWorkEndDate!,
                           ldText: 'Actual Work End Date',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: widget.dataForm.ActualWorkStartLat,
+                        InputDropDownItem(hdText: widget.dataForm.ActualWorkStartLat!,
                           ldText: 'Actual Work Start Lat',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: widget.dataForm.ActualWorkStartLong,
+                        InputDropDownItem(hdText: widget.dataForm.ActualWorkStartLong!,
                           ldText: 'Actual Work Start Long',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
@@ -269,13 +271,28 @@ class MyCustomFormState extends State<MyCustomForm> {
       setState(() {
         showBlueWidget = true;
       });
+      startTimer(2);
     } else {
       print(response.statusCode);
       print("Response Failure");
       setState(() {
         showRedWidget = true;
       });
+      startTimer(2);
     }
+  }
+  void startTimer(int seconds) {
+    Duration duration = Duration(seconds: seconds);
+    Timer timer = Timer(duration, onEnd);
+  }
+
+  void onEnd() {
+    setState(() {
+      showBlueWidget = false;
+      showRedWidget = false;
+    });
+    // This is the callback function that executes when the timer ends.
+    print('Timer has ended!');
   }
 }
 

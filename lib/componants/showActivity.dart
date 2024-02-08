@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friction/componants/ActivityData.dart';
+import 'package:friction/componants/DownloadCenter.dart';
 import 'package:friction/componants/updateActivity.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
@@ -43,6 +44,7 @@ String? lastCreatedActivityId = "10036";
 String lastCreatedServiceId = "";
 String lastCreatedActivityEmail = "";
 ActivityData dataToPass = ActivityData();
+DownloadCenter downloadCenter = DownloadCenter();
 
 
 class MyCustomForm extends StatefulWidget {
@@ -83,6 +85,37 @@ class MyCustomFormState extends State<MyCustomForm> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton(
+
+                                  onPressed: (){
+                                    downloadCenter.activityDownload(activityDataList);
+
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color.fromRGBO(26, 179, 148, 1),
+                                    foregroundColor: Colors.white,
+                                    side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 5),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Image.asset('assets/icons/menu/down.png',
+                                      fit: BoxFit.fitHeight,),
+                                      SizedBox(width: 6,),
+                                      Text("CSV",
+                                        style: TextStyle(color: Colors.white, fontSize: 12,
+                                            fontWeight: FontWeight.w400,letterSpacing: 1,fontFamily: 'WorkSans'),)
+                                    ],
+                                  )),
+                            ),
+                            SizedBox(width: 200,)
+                          ],
+                        ),
                         ActivityItem()
 
                       ],
@@ -128,8 +161,8 @@ class MyCustomFormState extends State<MyCustomForm> {
       for(var data in activityDataList) {
         if(lastCreatedActivityId != null) {
           if (data.ActivityTypeSerialId == lastCreatedActivityId) {
-            lastCreatedServiceId = data.ActivityTypeSerialId;
-            lastCreatedActivityEmail = data.ServiceTechEmail;
+            lastCreatedServiceId = data.ActivityTypeSerialId!;
+            lastCreatedActivityEmail = data.ServiceTechEmail!;
             dataToPass = data;
           }
         }

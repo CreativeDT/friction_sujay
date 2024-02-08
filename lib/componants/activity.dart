@@ -1,7 +1,14 @@
-import 'dart:ffi';
+//import 'dart:ffi';
 
+import 'dart:async';
+//import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:friction/componants/ActivityData.dart';
+import 'package:friction/data/ApiService.dart';
+import 'package:friction/data/model/RailLocationData.dart';
+import 'package:friction/data/model/ServiceTechData.dart';
+import 'package:friction/data/model/activityRequestData.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -15,6 +22,7 @@ import 'package:friction/componants/Scoreboard.dart';
 import 'package:friction/componants/Checkin.dart';
 import 'package:friction/componants/Footer.dart';
 import 'package:friction/componants/checkin_list_view.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 
 class Activity extends StatelessWidget {
   ActivityData? activityData;
@@ -34,7 +42,7 @@ class Activity extends StatelessWidget {
 
         centerTitle: true,
         ),
-        body: SingleChildScrollView(
+        body: Container(
           child: MyCustomForm()
           ),
         );
@@ -46,6 +54,14 @@ String railUnitLocationId = "1";
 String activityTypeId = "1";
 String activityStatusId = "1";
 String createdById = "1";
+ActivityRequestData _activityRequestData = ActivityRequestData();
+ApiService apiService = ApiService();
+List<String> suggestionList = [];
+List<String> serviceTechSuggestion = [];
+List<String> railLineSuggestion = [];
+List<String> divisionSuggestion = [];
+List<String> subdivisionSuggestion = [];
+List<String> milePostSuggetion = [];
 
 class MyCustomForm extends StatefulWidget {
   const MyCustomForm({super.key});
@@ -62,249 +78,288 @@ class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
   //TextEditingController serviceTechIdController = TextEditingController();
  // TextEditingController railUnitLocationIdController = TextEditingController();
-
+ @override
+  void initState() {
+    fetchAllSuggestion();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
-      child: SingleChildScrollView(
-        child: Container(
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+                child: Column(
                   children: [
-                    Container(
-                      margin: EdgeInsets.fromLTRB(16, 16, 0, 0),
-                      child: Text('Create Activity',style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1) , fontSize: 14,
-                        fontWeight: FontWeight.w600, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(10.0),
-                      padding: EdgeInsets.all(10.0),
-                      decoration:BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.black12,
-                            width: 2,)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InputDropDownItem(hdText: '',
-                            ldText: 'Select Service Tech*',
-                            sdIconPath: 'assets/icons/profile/down.png',
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.fromLTRB(16, 16, 0, 0),
+                          child: Text('Create Activity',style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1) , fontSize: 14,
+                            fontWeight: FontWeight.w600, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),
                           ),
-                          InputDropDownItem(hdText: '',
-                            ldText: 'Activity Type Id*',
-                            sdIconPath: 'assets/icons/profile/down.png',
-                          ),
-                          InputDropDownItem(hdText: '',
-                            ldText: 'Activity Status Id*',
-                            sdIconPath: 'assets/icons/profile/down.png',
-                          ),
-                          InputDropDownItem(hdText: '',
-                            ldText: 'Select Rail Line',
-                            sdIconPath: 'assets/icons/profile/down.png',
-                          ),
-                          // InputDropDownItem(hdText: '',
-                          //   ldText: 'Enter Division',
-                          //   sdIconPath: 'assets/icons/profile/down.png',
-                          // ),
-                          // InputDropDownItem(hdText: '',
-                          //   ldText: 'Enter Subdivision',
-                          //   sdIconPath: 'assets/icons/profile/down.png',
-                          // ),
-                          // InputDropDownItem(hdText: 'Select Mile Post',
-                          //   ldText: 'Mile Post',
-                          //   sdIconPath: 'assets/icons/profile/down.png',
-                          // ),
-                          // InputDropDownItem(hdText: '',
-                          //   ldText: 'Select Helper',
-                          //   sdIconPath: 'assets/icons/profile/down.png',
-                          // ),
-
-                          Row(
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(10.0),
+                          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          decoration:BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.black12,
+                                width: 2,)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-                                },
-                                child: const Text('Cancel'),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Select Service Tech*',
+                                sdIconPath: 'assets/icons/profile/down.png',
                               ),
-                              SizedBox(width: 10,),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Select Est Work Start Date with time*',
+                                sdIconPath: 'assets/icons/menu/Calendar.png',
+                              ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Select Est Work End Date with time*',
+                                sdIconPath: 'assets/icons/menu/Calendar.png',
+                              ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Select Rail Line',
+                                sdIconPath: 'assets/icons/profile/down.png',
+                              ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Enter Division',
+                                sdIconPath: 'assets/icons/profile/down.png',
+                              ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Enter Subdivision',
+                                sdIconPath: 'assets/icons/profile/down.png',
+                              ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Mile Post',
+                                sdIconPath: 'assets/icons/profile/down.png',
+                              ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Select Activity Type*',
+                                sdIconPath: 'assets/icons/profile/down.png',
+                              ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Select Helper',
+                                sdIconPath: 'assets/icons/profile/down.png',
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(bottom: 5),
+                                height: 70,
+                                width: 400,
+                                color: Color.fromRGBO(245, 245, 245, 1),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 3,),
+                                    Row(mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 15,),
+                                        Text('Helper Name',
+                                          style: TextStyle(color: Color.fromRGBO(175, 175, 175, 1) , fontSize: 14,
+                                            fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),),
+                                        SizedBox(width: 240,),
+                                        Image.asset('assets/icons/menu/trash.png'),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4,),
+                                    Row(mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 5,),
+                                        Expanded(
+                                          flex: 1,
+                                          child: InputDropDownItem(hdText: '',
+                                            ldText: 'Est Work Start D&T *',
+                                            sdIconPath: 'assets/icons/menu/Calendar.png',
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: InputDropDownItem(hdText: '',
+                                            ldText: 'Est Work Start D&T *',
+                                            sdIconPath: 'assets/icons/menu/Calendar.png',
+                                          ),
+                                        ),
+                                        SizedBox(width: 5,),
+                                      ],
+                                    ),
+                                      ],
 
-                              ElevatedButton(
-                                onPressed: () {
-                                  showGreenWidget = false;
-                                  showRedWidget = false;
-                                  if (_formKey.currentState!.validate()) {
-                                    createActivity();
-                                    setState(() {
-
-                                    });
-                                    /*ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Processing Data')),
-                                    );*/
-                                  }
-                                },
-                                child: const Text('Create Activity'),
+                                    ),
+                                ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Upload Image',
+                                sdIconPath: 'assets/icons/menu/export.png',
+                              ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Priority',
+                                sdIconPath: 'assets/icons/profile/down.png',
+                              ),
+                              InputDropDownItem(hdText: '',
+                                ldText: 'Link Work Item',
+                                sdIconPath: 'assets/icons/profile/down.png',
                               ),
 
+                              Row(
+                                children: [
+                                  SizedBox(width: 10,),
+                                  Expanded(
+                                    flex: 1,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 1),
+                                      ),
+                                      child: const Text('Cancel',
+                                        style: TextStyle(color: Color.fromRGBO(26, 179, 148, 1), fontSize: 14,
+                                            fontWeight: FontWeight.w600,letterSpacing: 1,fontFamily: 'WorkSans'),),
+                                    ),
+
+                                  ),
+
+                                  SizedBox(width: 10,),
+
+                                  Expanded(
+                                    flex: 1,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        showGreenWidget = false;
+                                        showRedWidget = false;
+                                        if (_formKey.currentState!.validate() == false) {
+                                          addActivity();
+                                          setState(() {
+                                          });
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color.fromRGBO(26, 179, 148, 1),
+                                        foregroundColor: Colors.white,
+                                        side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 5),
+                                      ),
+
+                                      child: const Text('Create Activity',
+                                        style: TextStyle(color: Colors.white, fontSize: 14,
+                                            fontWeight: FontWeight.w600,letterSpacing: 1,fontFamily: 'WorkSans'),),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                Positioned(
-                  right: 2,
-                  top: 2,
-
-                  child: Visibility(
-                    visible: showGreenWidget,
-                    child: Container(
-                      decoration:BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                        color: Colors.green
-                         ),
-                      padding: EdgeInsets.all(5.0),
-                      alignment: Alignment.topRight,
-                      width: 275,
-                      height: 53,
-                      //color: Colors.green,
-                      child: Center(
-                        child: Text('Activity created successfully, '
-                            'please refer Activity list to start work',
-                            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1) , fontSize: 12,
-                              fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',)),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 2,
-                  top: 2,
-
-                  child: Visibility(
-                    visible: showRedWidget,
-                    child: Container(
-                      padding: EdgeInsets.all(5.0),
-                      alignment: Alignment.topRight,
-                      width: 275,
-                      height: 38,
-                      //color: Colors.redAccent,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.redAccent
-                      ),
-                      child: Center(
-                        child: Text('Failed to create Activity, Please Try Again',
-                            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1) , fontSize: 12,
-                              fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',)),
-                      ),
-                    ),
-                  ),
-                ),
-
-              ],
             ),
-        ),
+          ),
+          Positioned(
+            right: 2,
+            top: 2,
+
+            child: Visibility(
+              visible: showGreenWidget,
+              child: Container(
+                decoration:BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.green
+                ),
+                padding: EdgeInsets.all(5.0),
+                alignment: Alignment.topRight,
+                width: 275,
+                height: 53,
+                //color: Colors.green,
+                child: Center(
+                  child: Text('Activity created successfully, '
+                      'please refer Activity list to start work',
+                      style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1) , fontSize: 12,
+                        fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',)),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 2,
+            top: 2,
+
+            child: Visibility(
+              visible: showRedWidget,
+              child: Container(
+                padding: EdgeInsets.all(5.0),
+                alignment: Alignment.topRight,
+                width: 275,
+                height: 38,
+                //color: Colors.redAccent,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.redAccent
+                ),
+                child: Center(
+                  child: Text('Failed to create Activity, Please Try Again',
+                      style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1) , fontSize: 12,
+                        fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',)),
+                ),
+              ),
+            ),
+          ),
+
+        ],
       ),
     );
   }
 
-  createActivity() async {
-      String? token = await SharedPreference().getStringFromSharedPreferences("token");
-     print(token);
-     //const String tocken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbmRlZXAua2lyYW5AZ2xvYmFsLWNzZy5jb20iLCJpYXQiOjE3MDU1NjA5NzN9.jVqyyJw6gcLJJCS554HwOHOAPtfZ1Ve3jnv5LMEnNEQ";
-    //const String API_URL = "http://172.16.116.65:8001/api/v1/user/user-login";
-    final Uri uri = Uri.parse(ApiStrings.baseUrl+ ApiStrings.endpoint_create_activity);
-     Map<String, String> headers = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer ${token}'
-    };
-     Map<String, String> body = {
-      "estimatedWorkStartDate": "16/03/2024 11:03:10",
-      "estimatedWorkEndDate": "16/03/2024 13:03:10",
-      "actualWorkStartDate": "16/03/2024 11:03:10",
-      "actualWorkEndDate": "16/03/2024 13:03:10",
-      "actualWorkStartLat": "41.74585",
-      "actualWorkStartLong": "-88.34061",
-      "actualEndWorkLat": "-88.34061",
-      "actualWorkEndLong": "-88.34061",
-      "truckId": "1245",
-      "mileageStart": "4321",
-      "mileageEnd": "4521",
-      "serviceTechId": serviceTechId,
-      "railUnitLocationId": railUnitLocationId,
-      "activityTypeId": "1",
-      "activityStatusId": "1",
-      "createdById": "1"
-    };
-    //Uri.parse(API_URL)
-    http.Response response = await http.post(uri,
-        headers: headers, body: jsonEncode(body));
-      print("Body --- ${body}");
+addActivity() async {
+    apiService.addActivity(_activityRequestData).then((response){
       if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = json.decode(response.body)["Friction"];
-      print("Response Success");
-      print(response.statusCode);
-      print(data["message"]);
-      print(data["data"]);
-      SharedPreference().saveStringToSharedPreferences("activityId", data["data"]["ActivityTypeSerialId"]);
-      setState(() {
-        showGreenWidget = true;
-      });
-    } else {
-      print("Response Failure");
-      setState(() {
-        showRedWidget = true;
-      });
-    }
+        final data = json.decode(response.body)["Friction"];
+        print("Response Success");
+        print(response.statusCode);
+        print(data["message"]);
+        print(data["data"]);
+        SharedPreference().saveStringToSharedPreferences("activityId", data["data"]["ActivityTypeSerialId"]);
+        setState(() {
+          showGreenWidget = true;
+        });
+        startTimer(3);
+
+      } else {
+        print("Response Failure");
+        setState(() {
+          showRedWidget = true;
+        });
+        startTimer(3);
+      }
+
+    });
+}
+  void startTimer(int seconds) {
+    Duration duration = Duration(seconds: seconds);
+    Timer timer = Timer(duration, onEnd);
+  }
+
+  void onEnd() {
+    setState(() {
+      showGreenWidget = false;
+      showRedWidget = false;
+    });
+    // This is the callback function that executes when the timer ends.
+    print('Timer has ended!');
   }
 }
-
-class InputItem extends StatelessWidget {
-  final String hText;
-  final String lText;
-  final String sIconPath ;
-  const InputItem({super.key, required this.hText, required this.lText, required this.sIconPath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 14.0),
-      height: 33,
-      child: TextFormField(
-        // The validator receives the text that the user has entered.
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter some text';
-          }
-          return null;
-        },
-        decoration: InputDecoration(
-          hintText: hText,
-          suffix: Center(child: Image.asset(sIconPath)),
-          labelText: lText,
-
-
-
-          // filled: false,
-        ),
-
-      ),
-    );
-  }
-}
-
-List<String> suggestionList = [];
 
 class InputDropDownItem extends StatefulWidget {
   final String hdText;
@@ -319,25 +374,30 @@ class InputDropDownItem extends StatefulWidget {
 
 class _InputDropDownItemState extends State<InputDropDownItem> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  DateTime selectedDate = DateTime.now();
   final TextEditingController _typeAheadController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 33,
-      margin: EdgeInsets.only(bottom: 14.0),
+      margin: EdgeInsets.fromLTRB(10, 0, 10, 14),
       child: TypeAheadField<String>(
         controller: _typeAheadController,
-            hideWithKeyboard: false,
+        hideWithKeyboard: false,
+        showOnFocus: widget.sdIconPath=='assets/icons/menu/Calendar.png'?false:true,
         builder: (context, controller, focusNode) {
+          //FocusManager.instance.primaryFocus?.unfocus();
           print(controller.text);
+          setInputData(widget.ldText, _typeAheadController);
           return TextFormField(
             controller: controller,
             focusNode: focusNode,
+            onChanged: (value){
+              //SystemChannels.textInput.invokeMethod('TextInput.hide');
+
+            },
 
             // The validator receives the text that the user has entered.
-
             validator: (value) {
               if (value == null || value.isEmpty) {
                 String error =  'Please enter some text';
@@ -346,11 +406,11 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
               return null;
             },
             decoration: InputDecoration(
-              isDense: true,
+              isDense: false,
               contentPadding:
               const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
               //hintText: widget.hdText,
-              // suffix: Center(child: Image.asset(widget.sdIconPath)),
+              suffixIcon:  Image.asset(widget.sdIconPath),
               labelText: widget.ldText,
               errorMaxLines: 1,
               // error: ,
@@ -361,27 +421,81 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
                 textBaseline: TextBaseline.alphabetic,
               ),
             ),
+            onTap:() {
+              // if (FocusScope.of(context).hasPrimaryFocus) {
+              //   FocusScope.of(context).unfocus();
+              // }
+              if(widget.sdIconPath == 'assets/icons/menu/Calendar.png'){
 
+                showOmniDateTimePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2101),
+                  is24HourMode: false,
+                  isShowSeconds: false,
+                  minutesInterval: 1,
+                  secondsInterval: 1,
+                  borderRadius: const BorderRadius.all(Radius.circular(2)),
+                  constraints: const BoxConstraints(
+                    maxWidth: 350,
+                    maxHeight: 600,
+                  ),
+                  transitionBuilder: (context, anim1, anim2, child) {
+                    return FadeTransition(
+                        opacity: anim1.drive(
+                      Tween(
+                        begin: 0,
+                        end: 1,
+                      ),
+                    ),
+                      child: child,
+                    );
+                  },
+                    transitionDuration: const Duration(milliseconds: 200),
+              barrierDismissible: true,
+                ).then((value) => {
+                  if (value != null && value != selectedDate){
+                    setState((){
+                      selectedDate = value;
+                      _typeAheadController.text = '${selectedDate.toLocal()}';
+                })
+                  }
+                });
+
+
+              }
+
+            },
           );
         },
             itemBuilder: (context, suggestion) {
             return Text(suggestion);
             },
+        hideOnUnfocus: true,
+
             onSelected: (String value) {
+              FocusScope.of(context).unfocus();
               _typeAheadController.text = value;
-              if(widget.ldText == 'Select Service Tech*'){
-                serviceTechId = _typeAheadController.text;
-              }
-              if(widget.ldText == 'Select Rail Line'){
-                railUnitLocationId = _typeAheadController.text;
-              }
               setState(() {});
+
 
             },
             suggestionsCallback: (String search) {
-          List<String> suggestions = createSuggestion(widget.ldText);
+          List<String> suggestions =[];
+          var itemSuggetionList = setSuggestion(widget.ldText);
+          print(itemSuggetionList.toString());
+          suggestions.addAll(itemSuggetionList);
+
+          /*if(widget.ldText== 'Select Rail Line'){
+           suggestions = createSuggestion(widget.ldText);
+           setState(() {
+           });
+          }else{
+            suggestions = createSuggestion(widget.ldText);
+          }*/
+
           //List<String> suggestions = fetchSuggestion(widget.ldText);
-          removeSuggestion();
               return suggestions;
               /*['1','2','3','4','5','a'];*/
             },
@@ -390,19 +504,41 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
 
     );
   }
+
+   setInputData(String ldText, TextEditingController typeAheadController) {
+    switch(ldText){
+      case 'Select Service Tech*':
+        _activityRequestData.serviceTechId = typeAheadController.text;
+      case 'Select Est Work Start Date with time*':
+        _activityRequestData.estimatedWorkStartDate = typeAheadController.text;
+      case 'Select Est Work End Date with time*':
+        _activityRequestData.estimatedWorkEndDate = typeAheadController.text;
+      case 'Select Rail Line':
+        _activityRequestData.railUnitLocationId = typeAheadController.text;
+      case 'Select Activity Type*':
+      _activityRequestData.activityTypeId = typeAheadController.text;
+      default:
+        break;
+
+    }
+
+  }
 }
 
-createSuggestion (String ltext){
+/*createSuggestion (String ltext){
   int n = 5;
-  if(ltext == 'Select Service Tech*') {
-    n = 10;
+  switch(ltext){
+    case 'Select Service Tech*':
+             n = 10;
+    case 'Activity Type Id*':
+       n= 5;
+    case 'Select Rail Line':
+       n=3;
+    default :
+      n=5;
+
   }
-  if(ltext == 'Activity Type Id*') {
-    n = 7;
-  }
-  if(ltext == 'Select Rail Line') {
-    n = 3;
-  }
+
     for (var i = 1; i <= n; i++) {
       suggestionList.add(i.toString());
     }
@@ -412,58 +548,80 @@ createSuggestion (String ltext){
 
   return suggestionList;
 
+}*/
+
+setSuggestion (var ldtext,){
+  switch(ldtext){
+    case 'Select Service Tech*':
+      return serviceTechSuggestion;
+    case 'Select Rail Line':
+      return railLineSuggestion;
+    case 'Enter Division':
+      return divisionSuggestion;
+    case 'Enter Subdivision':
+      return subdivisionSuggestion;
+    case 'Mile Post':
+      return milePostSuggetion;
+      default:
+        return ['1','2','3','a'];
+  }
 }
-removeSuggestion (){
-  suggestionList = [];
+fetchAllSuggestion () {
+  print("fetchAllSuggestion called");
+  fetchServiceTechSuggestion();
+  fetchRailLineSuggestion();
 }
-fetchSuggestion (String ltext) async {
-  String? token = await SharedPreference().getStringFromSharedPreferences(
-      "token");
-  String endpoint_suggestion = "";
-         // endpoint_suggestion = ApiStrings.endpoint_get_all_activity;
-  if(ltext.isNotEmpty){
-    switch(ltext) {
-      case 'Select Service Tech*':
-        endpoint_suggestion = ApiStrings.endpoint_get_all_service_techs;
-        break;
-      case 'Select Rail Line':
-        endpoint_suggestion = ApiStrings.endpoint_get_all_rail_location;
+fetchServiceTechSuggestion () {
+  serviceTechSuggestion.clear();
+  List<ServiceTechData> serviceTechList = [];
+  Set<String> serviceList ={} ;
+  apiService.getServiceTech().then((data){
+    for(var value in data){
+      serviceTechList.add(ServiceTechData.fromJson(value));
     }
+    for (var item in serviceTechList){
+      serviceList.add(item.ServiceTechEmail.toString());
+    }
+    serviceTechSuggestion.addAll(serviceList.toList());
   }
 
-  final Uri uri = Uri.parse(
-      ApiStrings.baseUrl + endpoint_suggestion);
-  Map<String, String> headers = {
-    'Content-type': 'application/json',
-    'Accept': 'application/json',
-    'Authorization': 'Bearer ${token}'
-  };
+  );
 
-  http.Response response = await http.get(uri,
-      headers: headers,);
-  if (response.statusCode == 200 || response.statusCode == 201) {
-    final data = json.decode(response.body)["Friction"];
-    print("Response Success");
-    print(response.statusCode);
-    print(data["message"]);
-    print(data["data"]);
+  
+}
+fetchRailLineSuggestion () {
+  railLineSuggestion.clear();
+  divisionSuggestion.clear();
+  milePostSuggetion.clear();
+  subdivisionSuggestion.clear();
 
-    //suggestionList.addAll(data["data"]);
-  } else {
-    print("Response Failure");
-  }
+  Set<String> divisionList ={} ;
+  Set<String> subdivisionList ={} ;
+  Set<String> milePostList = {};
+  List<RailLocationData> railLocationList = [];
+  apiService.getRailUnitLocations().then((data){
+    for(var data in data){
+      railLocationList.add(RailLocationData.fromJson(data));
+    }
+    for (var item in railLocationList){
+      railLineSuggestion.add(item.RailUnitLocationId.toString());
+      divisionList.add(item.Division.toString());
+      subdivisionList.add(item.SubDivision.toString());
+      milePostList.add(item.MilePost.toString());
+    }
+    divisionSuggestion.addAll(divisionList.toList());
+    subdivisionSuggestion.addAll(subdivisionList.toList());
+    milePostSuggetion.addAll(milePostList.toList());
+
+    print(railLocationList.toString());
+    print(divisionSuggestion.toString());
+    print(subdivisionSuggestion.toString());
+  });
+
 }
 
 
-class ActivityCreationData {
-  String _serviceTech='1';
-  String _railLine='1';
 
-
-  ActivityCreationData(this._serviceTech, this._railLine);
-
-
-}
 
 
 
