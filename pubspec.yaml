@@ -33,6 +33,7 @@ dependencies:
   csv: ^5.1.1
   path_provider: ^2.1.2
   omni_datetime_picker: ^1.0.9
+  dropdown_button2: ^2.3.8
   flutter:
     sdk: flutter
 

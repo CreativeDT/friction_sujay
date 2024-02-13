@@ -23,6 +23,7 @@ import 'package:friction/componants/Checkin.dart';
 import 'package:friction/componants/Footer.dart';
 import 'package:friction/componants/checkin_list_view.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class Activity extends StatelessWidget {
   ActivityData? activityData;
@@ -120,6 +121,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                 ldText: 'Select Service Tech*',
                                 sdIconPath: 'assets/icons/profile/down.png',
                               ),
+                              CustomDropDown(),
                               InputDropDownItem(hdText: '',
                                 ldText: 'Select Est Work Start Date with time*',
                                 sdIconPath: 'assets/icons/menu/Calendar.png',
@@ -384,6 +386,7 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
       child: TypeAheadField<String>(
         controller: _typeAheadController,
         hideWithKeyboard: false,
+        hideOnUnfocus: true,
         showOnFocus: widget.sdIconPath=='assets/icons/menu/Calendar.png'?false:true,
         builder: (context, controller, focusNode) {
           //FocusManager.instance.primaryFocus?.unfocus();
@@ -469,19 +472,15 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
             },
           );
         },
-            itemBuilder: (context, suggestion) {
+        itemBuilder: (context, suggestion) {
             return Text(suggestion);
             },
-        hideOnUnfocus: true,
-
-            onSelected: (String value) {
+        onSelected: (String value) {
               FocusScope.of(context).unfocus();
               _typeAheadController.text = value;
               setState(() {});
-
-
             },
-            suggestionsCallback: (String search) {
+        suggestionsCallback: (String search) {
           List<String> suggestions =[];
           var itemSuggetionList = setSuggestion(widget.ldText);
           print(itemSuggetionList.toString());
@@ -524,6 +523,66 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
 
   }
 }
+
+class CustomDropDown extends StatefulWidget {
+  const CustomDropDown({Key? key}) : super(key: key);
+
+  @override
+  State<CustomDropDown> createState() => _CustomDropDownState();
+}
+
+class _CustomDropDownState extends State<CustomDropDown> {
+  final List<String> items = [
+    'Item1',
+    'Item2',
+    'Item3',
+    'Item4',
+  ];
+  String? selectedValue;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton2<String>(
+            isExpanded: true,
+            hint: Text(
+              'Select Item',
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).hintColor,
+              ),
+            ),
+            items: items
+                .map((String item) => DropdownMenuItem<String>(
+              value: item,
+              child: Text(
+                item,
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+            ))
+                .toList(),
+            value: selectedValue,
+            onChanged: (String? value) {
+              setState(() {
+                selectedValue = value;
+              });
+            },
+            buttonStyleData: const ButtonStyleData(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              height: 40,
+              width: 140,
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+            ),
+          ),
+        ),
+      );
+  }
+}
+
 
 /*createSuggestion (String ltext){
   int n = 5;
