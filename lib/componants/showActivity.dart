@@ -1,4 +1,4 @@
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:friction/componants/ActivityData.dart';
@@ -7,6 +7,7 @@ import 'package:friction/componants/updateActivity.dart';
 import 'dart:convert';
 import 'package:friction/ApiStrings.dart';
 import 'package:friction/componants/SharedPreference.dart';
+import 'package:friction/componants/workStartPage.dart';
 import 'package:http/http.dart' as http;
 
 List<ActivityData> activityDataList = [];
@@ -16,7 +17,9 @@ String lastCreatedActivityEmail = "";
 ActivityData dataToPass = ActivityData();
 DownloadCenter downloadCenter = DownloadCenter();
 Set<int> expandedTiles = {};
+Set<String> serviceTechList = {};
 ValueNotifier<bool> showHeader = ValueNotifier<bool>(true);
+ValueNotifier<bool> filterOn = ValueNotifier<bool>(false);
 
 class showActivity extends StatelessWidget {
   const showActivity({super.key});
@@ -36,6 +39,15 @@ class showActivity extends StatelessWidget {
       body: SingleChildScrollView(
           child: MyCustomForm()
       ),
+      bottomNavigationBar: Container(
+        height: 50,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Showing 1-10 out of 3000'),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -49,14 +61,13 @@ class MyCustomForm extends StatefulWidget {
   }
 }
 class MyCustomFormState extends State<MyCustomForm> {
-  bool showBlueWidget = false;
-  bool showRedWidget = false;
 
   @override
   void initState() {
     showActivity();
     expandedTiles.clear();
     showHeader.value = true;
+    filterOn.value = false;
     print("from init of form $showHeader");
     print(expandedTiles.toString());
     super.initState();
@@ -67,7 +78,14 @@ class MyCustomFormState extends State<MyCustomForm> {
     return SingleChildScrollView(
       child: Container(
         margin: EdgeInsets.all(5.0),
-        child: Column(
+        child: Stack(
+          children: [
+            ValueListenableBuilder<bool>(
+              valueListenable: filterOn,
+            builder: (context, value, child){
+                return Visibility(
+                  visible: !filterOn.value,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ValueListenableBuilder<bool>(
@@ -77,35 +95,100 @@ class MyCustomFormState extends State<MyCustomForm> {
                           // Rebuild the widget when _isToggled.value changes
                           return  Visibility(
                             visible: value,
-                            child: Row(
+                            child: Column(
                               children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: ElevatedButton(
-
-                                      onPressed: (){
-                                        downloadCenter.activityDownload(activityDataList);
-
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color.fromRGBO(26, 179, 148, 1),
-                                        foregroundColor: Colors.white,
-                                        side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 5),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Image.asset('assets/icons/menu/down.png',
-                                            fit: BoxFit.fitHeight,),
-                                          SizedBox(width: 6,),
-                                          Text("CSV",
-                                            style: TextStyle(color: Colors.white, fontSize: 12,
-                                                fontWeight: FontWeight.w400,letterSpacing: 1,fontFamily: 'WorkSans'),)
-                                        ],
-                                      )),
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(10, 15, 10, 10),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: SizedBox(),),
+                                      InkWell(
+                                          onTap: (){
+                                            filterOn.value = true;
+                                          },
+                                          child: Image.asset('assets/icons/filters.png')),
+                                    ],
+                                  ),
                                 ),
-                                SizedBox(width: 200,)
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(5, 0, 5, 10),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+
+                                        child: Container(
+                                          height: 32,
+                                          child: ElevatedButton(
+
+                                              onPressed: (){
+                                                downloadCenter.activityDownload(activityDataList);
+
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color.fromRGBO(26, 179, 148, 1),
+                                                foregroundColor: Colors.white,
+                                                side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 5),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Image.asset('assets/icons/menu/down.png',
+                                                    fit: BoxFit.fitHeight,),
+                                                  SizedBox(width: 6,),
+                                                  Text("CSV",
+                                                    style: TextStyle(color: Colors.white, fontSize: 12,
+                                                        fontWeight: FontWeight.w400,letterSpacing: 1,fontFamily: 'WorkSans'),)
+                                                ],
+                                              )),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10,),
+                                      Container(
+                                        height: 32,
+                                        width:195,
+                                        child: SearchAnchor(
+                                            builder: (BuildContext context, SearchController controller) {
+                                              return SearchBar(
+                                                controller: controller,
+                                                side: MaterialStateProperty.all(const BorderSide(color: Color.fromRGBO(205, 205, 205, 1))),
+                                                constraints: const BoxConstraints(
+                                                    maxWidth: 185,
+                                                    maxHeight: 32
+                                                ),
+                                                onTap: () {
+                                                  controller.openView();
+                                                },
+                                                onChanged: (_) {
+                                                  controller.openView();
+                                                },
+                                                leading: const Icon(Icons.search,color: Color.fromRGBO(205, 205, 205, 1),
+                                                  size: 25 ,),
+                                                hintText: 'Search By service tech',
+                                                hintStyle:  MaterialStateProperty.all(TextStyle(color: Color.fromRGBO(158, 158, 158, 1), fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans')),
+                                              );
+                                            }, suggestionsBuilder:
+                                            (BuildContext context, SearchController controller) {
+                                          return List<ListTile>.generate(serviceTechList.length, (int index) {
+                                            final String item = serviceTechList.toList()[index];
+                                            return ListTile(
+                                              title: Text(item),
+                                              onTap: () {
+                                                setState(() {
+                                                  controller.closeView(item);
+                                                  //to do handling search
+                                                });
+                                              },
+                                            );
+                                          });
+                                        }),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           );
@@ -120,11 +203,318 @@ class MyCustomFormState extends State<MyCustomForm> {
 
                     ],
                   ),
+                );
+            },
+            ),
+            ValueListenableBuilder<bool>(
+                valueListenable: filterOn,
+                builder: (context, value, child){
+                  return Visibility(
+                      visible: filterOn.value,
+                      child: Container(
+                        margin: EdgeInsets.all(10.0),
+                        height: 320,
+                        width: 400,
+                        child: Card(
+                          borderOnForeground: true,
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                            side: BorderSide(
+                              color: Color.fromRGBO(0, 0, 0, 0.25), // Border color
+                              width: 1.0,          // Border width
+                            ),
+                          ),
+                          child: Stack(
+                            children: [
+                              Column(mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      padding: EdgeInsets.all(10),
+                                      child: Text('Filters',
+                                        style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1), fontSize: 14,
+                                            fontWeight: FontWeight.w700,letterSpacing: 1,fontFamily: 'WorkSans'),
+                                      )),
+
+                                  Container(
+                                    height: 33,
+                                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 10,),
+
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormField(
+                                              decoration: InputDecoration(
+                                                labelStyle: TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                labelText: 'Select Service Tech*',
+                                                hintStyle:  TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                                                  size: 25 ,),
+                                                border: OutlineInputBorder(),
+                                              )
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 20,),
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormField(
+                                              decoration: InputDecoration(
+                                                labelStyle: TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                labelText: 'Select Activity type',
+                                                hintStyle:  TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                                                  size: 25 ,),
+                                                border: OutlineInputBorder(),
+                                              )
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 10,)
+
+
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 33,
+                                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 10,),
+
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormField(
+                                              decoration: InputDecoration(
+                                                labelStyle: TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                labelText: 'select Work start',
+                                                hintStyle:  TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                                                  size: 25 ,),
+                                                border: OutlineInputBorder(),
+                                              )
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 20,),
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormField(
+                                              decoration: InputDecoration(
+                                                labelStyle: TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                labelText: 'select Work end',
+                                                hintStyle:  TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                                                  size: 25 ,),
+                                                border: OutlineInputBorder(),
+                                              )
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 10,)
+
+
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 33,
+                                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 10,),
+
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormField(
+                                              decoration: InputDecoration(
+                                                labelStyle: TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                labelText: 'Select Rail Line',
+                                                hintStyle:  TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                                                  size: 25 ,),
+                                                border: OutlineInputBorder(),
+                                              )
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 20,),
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormField(
+                                              decoration: InputDecoration(
+                                                labelStyle: TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                labelText: 'Select Mile Post',
+                                                hintStyle:  TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                                                  size: 25 ,),
+                                                border: OutlineInputBorder(),
+                                              )
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 10,)
+
+
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 33,
+                                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 10,),
+
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormField(
+                                              decoration: InputDecoration(
+                                                labelStyle: TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                labelText: 'Enter Division',
+                                                hintStyle:  TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                                                  size: 25 ,),
+                                                border: OutlineInputBorder(),
+                                              )
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 20,),
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormField(
+                                              decoration: InputDecoration(
+                                                labelStyle: TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                labelText: 'Enter Sub-Division',
+                                                hintStyle:  TextStyle( fontSize: 12,
+                                                    fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
+                                                suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                                                  size: 25 ,),
+                                                border: OutlineInputBorder(),
+                                              )
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 10,)
+
+
+                                      ],
+                                    ),
+                                  ),
+
+                                  Container(
+                                    height: 33,
+                                    margin: EdgeInsets.fromLTRB(0, 25, 0, 5),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 10,),
+
+                                        Expanded(
+                                          flex: 1,
+                                          child: ElevatedButton(
+
+                                            onPressed: () {
+                                              //Navigator.push(context, MaterialPageRoute(builder: (context) => updateActivity(data: widget.itemData,)));
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              padding: EdgeInsets.fromLTRB(1, 0, 1, 0),
+                                              backgroundColor: Colors.white,
+                                              side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1),
+                                                  width: 1),
+                                            ),
+                                            child:  Text('Clear filters',
+                                              style: TextStyle(color: Color.fromRGBO(26, 179, 148, 1), fontSize: 12,
+                                                  fontWeight: FontWeight.w600,letterSpacing: 0,fontFamily: 'WorkSans'),),
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 20,),
+                                        Expanded(
+                                          flex: 1,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              setState(() {
+                                              });
+                                              //Navigator.push(context, MaterialPageRoute(builder: (context) => WorkStartPage()));
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              padding: EdgeInsets.fromLTRB(1, 0, 1, 0),
+                                              backgroundColor: Color.fromRGBO(26, 179, 148, 1),
+                                              side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 1),
+                                            ),
+                                            child: const Text('Apply',
+                                              style: TextStyle(color: Colors.white, fontSize: 12,
+                                                  fontWeight: FontWeight.w600,letterSpacing: 0,fontFamily: 'WorkSans'),),
+                                          ),
+
+                                        ),
+                                        SizedBox(width: 10,)
+
+
+                                      ],
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                              Positioned(top: 5,
+                                  right: 5,
+                                  child: InkWell(
+                                      onTap: (){
+                                        setState(() {
+                                          filterOn.value = false;
+                                        });
+                                        //Navigator.of(context).pop();
+                                      },
+                                      child: Image.asset('assets/icons/close.png')))
+                            ],
+                          ),
+                        ),
+                      ),
+                  );
+                }
+                ),
+
+
+          ],
+        ),
 
             ),
 
       );
   }
+  
+  
   List<Widget> generateCardList(int count) {
     List<ActivityCard> cardList = [];
     for(var data in activityDataList){
@@ -132,7 +522,6 @@ class MyCustomFormState extends State<MyCustomForm> {
     }
     return cardList;
   }
-
   showActivity() async {
     String? token = await SharedPreference().getStringFromSharedPreferences("token");
     print(token);
@@ -162,6 +551,9 @@ class MyCustomFormState extends State<MyCustomForm> {
       for(var data in data["data"]){
         activityDataList.add(ActivityData.fromJson(data));
       }
+      for(var item in activityDataList){
+        serviceTechList.add(item.ServiceTechEmail!);
+      }
       //print(activityDataList.toString());
       /*for(var value in activityDataList) {
         var items = ItemData(ID: value.ActivityTypeSerialId.toString(),
@@ -184,6 +576,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       setState(() {
       });
       print ("activityDataList" + activityDataList.toString());
+      print ("serviceTechList" + serviceTechList.toString());
       //print("itemList:" + itemList.toString() );
     } else {
       print("Response Failure");
@@ -206,9 +599,12 @@ class _ActivityCardState extends State<ActivityCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 5,
       child: Container(
-        padding: EdgeInsets.only(
-            top: 6.0, left: 0.0, right: 0.0, bottom: 0.0),
+        decoration: BoxDecoration(
+          border: Border.all(color: Color.fromRGBO(217, 217, 217, 1)),
+          borderRadius: BorderRadius.circular(4),
+        ),
         child: ExpansionTile(
           childrenPadding: EdgeInsets.only(left: 5),
           onExpansionChanged: (value){
@@ -232,7 +628,6 @@ class _ActivityCardState extends State<ActivityCard> {
 
           },
           title: Container(
-            margin: EdgeInsets.all(0.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,7 +685,7 @@ class _ActivityCardState extends State<ActivityCard> {
                                   flex: 1,
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      //Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => WorkStartPage()));
                                     },
                                     style: ElevatedButton.styleFrom(
                                       padding: EdgeInsets.fromLTRB(1, 0, 1, 0),
@@ -409,11 +804,13 @@ class _ActivityCardState extends State<ActivityCard> {
               ),
             ),
             Container(
-              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              height: 27,
+              width: 380,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(width: 5,),
                   Expanded(
                     flex: 6,
                     child: ElevatedButton(
@@ -421,10 +818,11 @@ class _ActivityCardState extends State<ActivityCard> {
                         //Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
                       },
                       style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.all(0),
                         backgroundColor: Colors.white,
                         side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 1),
                       ),
-                      child: Row(mainAxisAlignment: MainAxisAlignment.start,
+                      child: Row(mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text('Upload Image',
                             style: TextStyle(color: Color.fromRGBO(26, 179, 148, 1), fontSize: 12,
@@ -444,7 +842,7 @@ class _ActivityCardState extends State<ActivityCard> {
                         //Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
                       },
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.fromLTRB(1, 0, 1, 0),
+                        padding: EdgeInsets.all(0),
                         backgroundColor: Colors.white,
                         side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 1),
                       ),
@@ -474,10 +872,12 @@ class _ActivityCardState extends State<ActivityCard> {
                     ),
 
                   ),
+                  SizedBox(width: 5,),
 
                 ],
               ),
             ),
+            SizedBox(height: 20,)
           ],
         ),
       ),

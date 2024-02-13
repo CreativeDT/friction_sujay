@@ -46,6 +46,7 @@ class DailyLogData {
   int? rMU;
   int? serialNumber;
   String? possibleStairsGateAccess;
+  int? helperCount;
 
   DailyLogData(
       {this.dailyLogId,
@@ -94,7 +95,8 @@ class DailyLogData {
         this.sightDistance,
         this.rMU,
         this.serialNumber,
-        this.possibleStairsGateAccess});
+        this.possibleStairsGateAccess,
+        this.helperCount});
 
   DailyLogData.fromJson(Map<String, dynamic> json) {
     dailyLogId = json['DailyLogId'];
@@ -144,6 +146,7 @@ class DailyLogData {
     rMU = json['RMU'];
     serialNumber = json['SerialNumber'];
     possibleStairsGateAccess = json['PossibleStairsGateAccess'];
+    helperCount = json['HelperCount'];
   }
 
   Map<String, dynamic> toJson() {
@@ -195,6 +198,7 @@ class DailyLogData {
     data['RMU'] = this.rMU;
     data['SerialNumber'] = this.serialNumber;
     data['PossibleStairsGateAccess'] = this.possibleStairsGateAccess;
+    data['HelperCount'] = this.helperCount;
     return data;
   }
 }

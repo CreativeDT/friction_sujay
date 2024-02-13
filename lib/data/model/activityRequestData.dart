@@ -21,21 +21,21 @@ String? createdById;
 ActivityRequestData(
 {this.estimatedWorkStartDate,
 this.estimatedWorkEndDate,
-this.actualWorkStartDate,
-this.actualWorkEndDate,
-this.isAmended,
-this.actualWorkStartLat,
-this.actualWorkStartLong,
-this.actualEndWorkLat,
-this.actualWorkEndLong,
-this.truckId,
-this.mileageStart,
-this.mileageEnd,
+this.actualWorkStartDate="16/03/2024 11:03:10",
+this.actualWorkEndDate= "16/03/2024 13:03:10",
+this.isAmended = true,
+this.actualWorkStartLat= "-88.34061",
+this.actualWorkStartLong= "-88.34061",
+this.actualEndWorkLat= "-88.34061",
+this.actualWorkEndLong= "-88.34061",
+this.truckId="1245",
+this.mileageStart= "4521",
+this.mileageEnd = "4521",
 this.serviceTechId,
 this.railUnitLocationId,
 this.activityTypeId,
-this.activityStatusId,
-this.createdById});
+this.activityStatusId = "1",
+this.createdById= "1"});
 
 ActivityRequestData.fromJson(Map<String, dynamic> json) {
 estimatedWorkStartDate = json['estimatedWorkStartDate'];

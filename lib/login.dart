@@ -14,11 +14,16 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         resizeToAvoidBottomInset: false,
+
         appBar: AppBar(
           backgroundColor: Colors.white,
-          systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+          systemOverlayStyle: SystemUiOverlayStyle(
+              //systemNavigationBarColor: Colors.transparent,
+              statusBarColor: Colors.transparent
+          ),
           elevation: 0,
         ),
         backgroundColor: const Color.fromRGBO(21, 134, 202, 1),
