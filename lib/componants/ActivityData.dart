@@ -14,6 +14,10 @@ class ActivityData {
   String? MileageEnd= "4521";
   String? ServiceTechEmail= "1232@testing.com";
   String? RailLocation= "Burlington Northern";
+  String? Division = "CHICAGO";
+  String? SubDivision = "AURORA";
+  String? MilePost = "39.1";
+  String? Helper = null;
   String? ActivityType= "Audit Survey";
   String? ActivityStatus= "Not Started";
   String? CreatedBy= "sandeep.kiran@global-csg.com";
@@ -27,6 +31,10 @@ class ActivityData {
                   this.ActualWorkEndDate = "",
                   this.ActualWorkStartLat = "",
                   this.ActualWorkStartLong ="",
+    this.RailLocation = "",
+    this.Division = "",
+    this.SubDivision = "",
+    this.MilePost = "",
   });
 
   factory ActivityData.fromJson(Map map) => ActivityData(
@@ -38,7 +46,12 @@ class ActivityData {
       ActualWorkStartDate: map["ActualWorkStartDate"],
       ActualWorkEndDate: map["ActualWorkEndDate"],
       ActualWorkStartLat: map["ActualWorkStartLat"],
-      ActualWorkStartLong: map["ActualWorkStartLong"]
+      ActualWorkStartLong: map["ActualWorkStartLong"],
+      RailLocation: map["RailRoad"],
+    Division: map["Division"],
+    SubDivision: map["SubDivision"],
+    MilePost: map["MilePost"]
+
   );
 
   @override

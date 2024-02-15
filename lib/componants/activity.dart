@@ -1,6 +1,10 @@
 //import 'dart:ffi';
 
 import 'dart:async';
+import 'dart:ffi';
+//import 'dart:html';
+import 'dart:io';
+import 'package:path/path.dart';
 //import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +13,7 @@ import 'package:friction/data/ApiService.dart';
 import 'package:friction/data/model/RailLocationData.dart';
 import 'package:friction/data/model/ServiceTechData.dart';
 import 'package:friction/data/model/activityRequestData.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -24,6 +29,12 @@ import 'package:friction/componants/Footer.dart';
 import 'package:friction/componants/checkin_list_view.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+
+ValueNotifier<bool> selectedItemsChanged = ValueNotifier<bool>(false);
+List<String> selectedItems = [];
+
+ValueNotifier<bool> addActivityButtonEnabled = ValueNotifier<bool>(false);
+var countFilled = 0;
 
 class Activity extends StatelessWidget {
   ActivityData? activityData;
@@ -59,10 +70,14 @@ ActivityRequestData _activityRequestData = ActivityRequestData();
 ApiService apiService = ApiService();
 List<String> suggestionList = [];
 List<String> serviceTechSuggestion = [];
+List<String> helperList = [];
 List<String> railLineSuggestion = [];
 List<String> divisionSuggestion = [];
 List<String> subdivisionSuggestion = [];
 List<String> milePostSuggetion = [];
+
+List<ServiceTechData> serviceTechList = [];
+List<RailLocationData> railLocationList = [];
 
 class MyCustomForm extends StatefulWidget {
   const MyCustomForm({super.key});
@@ -73,7 +88,10 @@ class MyCustomForm extends StatefulWidget {
   }
 }
 
+
 class MyCustomFormState extends State<MyCustomForm> {
+  File? _image;
+  List<String> selectedImages = [];
   bool showGreenWidget = false;
   bool showRedWidget = false;
   final _formKey = GlobalKey<FormState>();
@@ -81,11 +99,24 @@ class MyCustomFormState extends State<MyCustomForm> {
  // TextEditingController railUnitLocationIdController = TextEditingController();
  @override
   void initState() {
+   print("from init");
+   serviceTechList.clear();
+   countFilled = 0;
+   addActivityButtonEnabled.value = false;
+   railLocationList.clear();
     fetchAllSuggestion();
+    //print(serviceTechSuggestion);
+    setState(() {
+      selectedItems.clear();
+      selectedItemsChanged.value = !selectedItemsChanged.value;
+    });
+    //print(serviceTechSuggestion.join(","));
     super.initState();
+
   }
   @override
   Widget build(BuildContext context) {
+
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
@@ -150,54 +181,52 @@ class MyCustomFormState extends State<MyCustomForm> {
                                 sdIconPath: 'assets/icons/profile/down.png',
                               ),
                               CustomDropDown(),
-                              Container(
-                                margin: EdgeInsets.only(bottom: 5),
-                                height: 70,
-                                width: 400,
-                                color: Color.fromRGBO(245, 245, 245, 1),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SizedBox(height: 3,),
-                                    Row(mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(width: 15,),
-                                        Text('Helper Name',
-                                          style: TextStyle(color: Color.fromRGBO(175, 175, 175, 1) , fontSize: 14,
-                                            fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),),
-                                        SizedBox(width: 240,),
-                                        Image.asset('assets/icons/menu/trash.png'),
-                                      ],
-                                    ),
-                                    SizedBox(height: 4,),
-                                    Row(mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(width: 5,),
-                                        Expanded(
-                                          flex: 1,
-                                          child: InputDropDownItem(hdText: '',
-                                            ldText: 'Est Work Start D&T *',
-                                            sdIconPath: 'assets/icons/menu/Calendar.png',
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: InputDropDownItem(hdText: '',
-                                            ldText: 'Est Work Start D&T *',
-                                            sdIconPath: 'assets/icons/menu/Calendar.png',
-                                          ),
-                                        ),
-                                        SizedBox(width: 5,),
-                                      ],
-                                    ),
-                                      ],
+                              ValueListenableBuilder<bool>(
+                                valueListenable: selectedItemsChanged,
+                                builder: (BuildContext context, bool value, Widget? child) {
+                                  print("from ValueListenableBuilder selectedItems.value: ${selectedItems}");
+                                  return Column(
+                                    children: generateHelperList(selectedItems),
+                                  );
+                                },
 
-                                    ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5),
+                                   ),
+                                width: 400,
+                                child: InkWell(
+
+                                  onTap: _pickImage,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        
+                                        child: Container(
+                                          alignment: AlignmentDirectional.centerStart,
+                                          height: 40,
+                                          child: _image != null ?Text (selectedImages.join(","))
+                                              : Text('Upload Image',style: TextStyle(color: Color.fromRGBO(175, 175, 175, 1), fontSize: 14,
+                                              fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),),
+                                        ),
+                                      ),
+                                      Image.asset('assets/icons/menu/export.png', alignment: AlignmentDirectional.centerEnd,),
+
+                                    ],
+                                  ),
                                 ),
-                              InputDropDownItem(hdText: '',
+                              ),
+                              /*InputDropDownItem(hdText: '',
                                 ldText: 'Upload Image',
                                 sdIconPath: 'assets/icons/menu/export.png',
-                              ),
+                              ),*/
                               InputDropDownItem(hdText: '',
                                 ldText: 'Priority',
                                 sdIconPath: 'assets/icons/profile/down.png',
@@ -231,25 +260,34 @@ class MyCustomFormState extends State<MyCustomForm> {
 
                                   Expanded(
                                     flex: 1,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        //showGreenWidget = false;
-                                       // showRedWidget = false;
-                                        if (_formKey.currentState!.validate()) {
-                                          addActivity();
-                                          setState(() {
-                                          });
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color.fromRGBO(26, 179, 148, 1),
-                                        foregroundColor: Colors.white,
-                                        side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 5),
-                                      ),
+                                    child: ValueListenableBuilder<bool>(
+                                      valueListenable: addActivityButtonEnabled,
+                                      builder: (BuildContext context, bool value, Widget? child) {
+                                        return ElevatedButton(
+                                          onPressed: addActivityButtonEnabled.value ? () {
+                                            //showGreenWidget = false;
+                                            // showRedWidget = false;
+                                            if (_formKey.currentState!.validate()) {
+                                              addActivity();
+                                              setState(() {
+                                              });
+                                            }
+                                          } : null ,
+                                          style: addActivityButtonEnabled.value ? ElevatedButton.styleFrom(
+                                            backgroundColor: Color.fromRGBO(26, 179, 148, 1),
+                                            foregroundColor: Colors.white,
+                                            side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 5),
+                                          ) : ElevatedButton.styleFrom(
+                                            backgroundColor: Color.fromRGBO(26, 179, 148, 0.4),
+                                            foregroundColor: Colors.white,
+                                            side: BorderSide(color: Color.fromRGBO(26, 179, 148, 0.4), width: 1),
+                                          ) ,
 
-                                      child: const Text('Create Activity',
-                                        style: TextStyle(color: Colors.white, fontSize: 14,
-                                            fontWeight: FontWeight.w600,letterSpacing: 1,fontFamily: 'WorkSans'),),
+                                          child: const Text('Create Activity',
+                                            style: TextStyle(color: Colors.white, fontSize: 14,
+                                                fontWeight: FontWeight.w600,letterSpacing: 1,fontFamily: 'WorkSans'),),
+                                        );
+                                      },
                                     ),
                                   ),
                                   SizedBox(width: 10,),
@@ -318,6 +356,32 @@ class MyCustomFormState extends State<MyCustomForm> {
         ],
       ),
     );
+  }
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        selectedImages.add(basename(pickedFile.path));
+        _image = File(pickedFile.path);
+      });
+
+      // Use _image variable as needed (e.g., upload it to a server)
+      print('Selected image path: ${pickedFile.path}');
+    }
+  }
+
+  List<Widget> generateHelperList(var selectedHelpers) {
+    print("from generateHelperList selectedItems.value: ${selectedItems}");
+    List<HelperItem> cardList = [];
+   if (selectedHelpers.length == 0 ){
+     cardList.add(HelperItem(itemData: "",));
+   } else {
+     for (var data in selectedHelpers) {
+       cardList.add(HelperItem(itemData: data));
+     }
+   }
+    return cardList;
   }
 
 addActivity() async {
@@ -413,6 +477,8 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
               //hintText: widget.hdText,
               suffixIcon:  Image.asset(widget.sdIconPath),
               labelText: widget.ldText,
+              labelStyle: TextStyle(color: Color.fromRGBO(175, 175, 175, 1), fontSize: 14,
+              fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans'),
               errorMaxLines: 1,
               // error: ,
               errorStyle: const TextStyle(
@@ -476,7 +542,14 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
         onSelected: (String value) {
               FocusScope.of(context).unfocus();
               _typeAheadController.text = value;
-              setState(() {});
+              setState(() {
+                countFilled = countFilled +1;
+                print("count= $countFilled");
+                if(countFilled >=10){
+                  addActivityButtonEnabled.value = true;
+                }
+              });
+
             },
         suggestionsCallback: (String search) {
           List<String> suggestions =[];
@@ -504,14 +577,22 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
 
    setInputData(String ldText, TextEditingController typeAheadController) {
     switch(ldText){
-      case 'Select Service Tech*':
-        _activityRequestData.serviceTechId = "1";
+      case 'Select Service Tech*':{
+        for(var item  in serviceTechList){
+          if(typeAheadController.text == item.ServiceTechEmail){
+            _activityRequestData.serviceTechId = item.ServiceTechId.toString();
+          }
+        }}
       case 'Select Est Work Start Date with time*':
         _activityRequestData.estimatedWorkStartDate = typeAheadController.text;
       case 'Select Est Work End Date with time*':
         _activityRequestData.estimatedWorkEndDate = typeAheadController.text;
-      case 'Select Rail Line':
-        _activityRequestData.railUnitLocationId = "1";
+      case 'Select Rail Line':{
+        for(var item  in railLocationList){
+          if(typeAheadController.text == item.RailUnitLocationId){
+            _activityRequestData.railUnitLocationId = item.Id.toString();
+          }
+        }}
       case 'Select Activity Type*':
       _activityRequestData.activityTypeId = typeAheadController.text;
       default:
@@ -531,14 +612,9 @@ class CustomDropDown extends StatefulWidget {
 
 class _CustomDropDownState extends State<CustomDropDown> {
   final TextEditingController _customDropDownController = TextEditingController();
-  final List<String> items = [
-    'Helper 1',
-    'Helper 2',
-    'Helper 3',
-    'Helper 4',
-  ];
-  String? selectedValue;
-  List<String> selectedItems = [];
+
+  String? selectedValue ;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -552,28 +628,28 @@ class _CustomDropDownState extends State<CustomDropDown> {
 
         child: DropdownButtonHideUnderline(
           child: DropdownButton2<String>(
-            isExpanded: true,
 
             hint: Text(
               'Select Helper',
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).hintColor,
-              ),
+              style: TextStyle(color: Color.fromRGBO(175, 175, 175, 1), fontSize: 14,
+              fontWeight: FontWeight.w400,letterSpacing: 0,fontFamily: 'WorkSans')
             ),
-            items: items.map((item) {
+            items: helperList.map((item) {
               return DropdownMenuItem(
                 value: item,
                 //disable default onTap to avoid closing menu when selecting an item
-                enabled: true,
+                enabled: false,
                 child: StatefulBuilder(
                   builder: (context, menuSetState) {
                     final isSelected = selectedItems.contains(item);
                     return InkWell(
                       onTap: () {
-                        isSelected ? selectedItems.remove(item) : selectedItems.add(item);
+
                         //This rebuilds the StatefulWidget to update the button's text
                         setState(() {
+                          selectedItemsChanged.value = !selectedItemsChanged.value;
+                          isSelected ? selectedItems.remove(item) : selectedItems.add(item);
+                          print("selectedItems.value: ${selectedItems}");
                         });
                         //This rebuilds the dropdownMenu Widget to update the check mark
                         menuSetState(() {});
@@ -607,18 +683,35 @@ class _CustomDropDownState extends State<CustomDropDown> {
             value: selectedItems.isEmpty ? null : selectedItems.last,
 
             onChanged: (String? value) {
+              print(" from onChanged selectedItems.value: ${selectedItems}");
             },
             selectedItemBuilder: (context) {
-             return items.map(
+             return serviceTechSuggestion.map(
                   (item) {
                 return Container(
-                   child: Text(
-                     selectedItems.join(', '),
-                     style: const TextStyle(
-                      fontSize: 14,
-                    overflow: TextOverflow.ellipsis,
-                   ),
-                  maxLines: 1,
+                   child: ValueListenableBuilder(
+                     valueListenable: selectedItemsChanged,
+                     builder: (BuildContext context, bool value, Widget? child) {
+                       if(selectedItems.isEmpty){
+                         return Text(
+                           'Select Helper',
+                           style: TextStyle(
+                             fontSize: 14,
+                             color: Theme.of(context).hintColor,
+                           ),
+                         );
+                       } else {
+                         return Text(
+
+                           selectedItems.join(', '),
+                           style: const TextStyle(
+                             fontSize: 14,
+                             overflow: TextOverflow.ellipsis,
+                           ),
+                           maxLines: 1,
+                         );
+                       }
+                     },
                    ),
                  );
                 },
@@ -644,30 +737,77 @@ class _CustomDropDownState extends State<CustomDropDown> {
 }
 
 
-/*createSuggestion (String ltext){
-  int n = 5;
-  switch(ltext){
-    case 'Select Service Tech*':
-             n = 10;
-    case 'Activity Type Id*':
-       n= 5;
-    case 'Select Rail Line':
-       n=3;
-    default :
-      n=5;
+class HelperItem extends StatefulWidget {
+   final String itemData;
+   HelperItem({super.key, required this.itemData});
 
+  @override
+  State<HelperItem> createState() => _HelperItemState();
+}
+
+class _HelperItemState extends State<HelperItem> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 5),
+      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+      height: 72,
+      width: 400,
+      color: Color.fromRGBO(245, 245, 245, 1),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(height: 3,),
+          Row(mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(width: 15,),
+              Text(widget.itemData.isEmpty ?"Helper name": widget.itemData,
+                style: TextStyle(color:widget.itemData.isEmpty? Color.fromRGBO(175, 175, 175, 1): Color.fromRGBO(69, 69, 69, 1) ,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400, fontStyle: FontStyle.normal,fontFamily: 'WorkSans',),),
+              Expanded(child: SizedBox()),
+              InkWell(
+                child: Image.asset('assets/icons/menu/trash.png',
+                color: widget.itemData.isEmpty? Colors.grey : Colors.red,),
+                onTap: (){
+                  selectedItems.remove(widget.itemData);
+                  setState(() {
+                    selectedItemsChanged.value = !selectedItemsChanged.value;
+                  });
+
+                },
+              ),
+            ],
+          ),
+          SizedBox(height: 5,),
+          Row(mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(width: 5,),
+              Expanded(
+                flex: 1,
+                child: InputDropDownItem(hdText: '',
+                  ldText: 'Est Work Start D&T *',
+                  sdIconPath: 'assets/icons/menu/Calendar.png',
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: InputDropDownItem(hdText: '',
+                  ldText: 'Est Work Start D&T *',
+                  sdIconPath: 'assets/icons/menu/Calendar.png',
+                ),
+              ),
+
+            ],
+          ),
+        ],
+
+      ),
+    );
   }
+}
 
-    for (var i = 1; i <= n; i++) {
-      suggestionList.add(i.toString());
-    }
-  if(ltext == 'Select Rail Line') {
-    suggestionList.add("a");
-  }
 
-  return suggestionList;
-
-}*/
 
 setSuggestion (var ldtext,){
   switch(ldtext){
@@ -692,7 +832,6 @@ fetchAllSuggestion () {
 }
 fetchServiceTechSuggestion () {
   serviceTechSuggestion.clear();
-  List<ServiceTechData> serviceTechList = [];
   Set<String> serviceList ={} ;
   apiService.getServiceTech().then((data){
     for(var value in data){
@@ -700,8 +839,10 @@ fetchServiceTechSuggestion () {
     }
     for (var item in serviceTechList){
       serviceList.add(item.ServiceTechEmail.toString());
+
     }
     serviceTechSuggestion.addAll(serviceList.toList());
+    helperList.addAll(serviceList.toList());
   }
 
   );
@@ -717,7 +858,7 @@ fetchRailLineSuggestion () {
   Set<String> divisionList ={} ;
   Set<String> subdivisionList ={} ;
   Set<String> milePostList = {};
-  List<RailLocationData> railLocationList = [];
+
   apiService.getRailUnitLocations().then((data){
     for(var data in data){
       railLocationList.add(RailLocationData.fromJson(data));

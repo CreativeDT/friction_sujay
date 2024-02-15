@@ -383,9 +383,28 @@ class _HomeState extends State<Home> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Container(
+                                  height:25,
                                   margin: EdgeInsets.only(left: 200),
                                   padding: const EdgeInsets.fromLTRB(100, 5, 0, 0),
-                                  child: Image.asset('assets/icons/filters.png'),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      //Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.fromLTRB(10, 2, 5, 2),
+                                      backgroundColor: Colors.white,
+                                      side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 1),
+                                    ),
+                                    child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text('Filters',
+                                          style: TextStyle(color: Color.fromRGBO(26, 179, 148, 1), fontSize: 12,
+                                              fontWeight: FontWeight.w600,letterSpacing: 0,fontFamily: 'WorkSans'),),
+                                        SizedBox(width: 10,),
+                                        Image.asset('assets/icons/setting4.png'),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

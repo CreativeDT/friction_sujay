@@ -12,12 +12,14 @@ class Headline extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         teamScore==0?Container(
+          width: 30,
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: const Text('Me',
             style: TextStyle(color: Color.fromRGBO(109, 109, 109, 1), fontSize: 14,
                 fontWeight: FontWeight.w600,letterSpacing: 1,fontFamily: 'WorkSans'),
           ),
         ): Container(
+              width: 30,
               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: const Text('Me',
                 style: TextStyle(color: Color.fromRGBO(109, 109, 109, 1), fontSize: 14,
@@ -27,27 +29,31 @@ class Headline extends StatelessWidget {
         teamScore==0?InkWell(
           onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Home(team: 1, location: locationScore,)));},
           child: Container(
-            padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             height: 30,
+            width: 40,
             child: Image.asset('assets/icons/toggle.png'),
 
           ),
         ): InkWell(
           onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Home(team: 0, location: locationScore,)));},
           child: Container(
-            padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             height: 30,
+            width: 40,
             child: Image.asset('assets/icons/toggle1.png'),
 
           ),
         ),
         teamScore==0?Container(
+          width: 70,
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: const Text('My Team',
             style: TextStyle(color: Color.fromRGBO(109, 109, 109, 1), fontSize: 14,
                 fontWeight: FontWeight.w400,letterSpacing: 1,fontFamily: 'WorkSans'),
           ),
         ): Container(
+          width: 70,
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: const Text('My Team',
             style: TextStyle(color: Color.fromRGBO(109, 109, 109, 1), fontSize: 14,

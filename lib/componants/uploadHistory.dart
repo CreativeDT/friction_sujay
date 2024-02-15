@@ -159,65 +159,6 @@ class MyCustomFormState extends State<MyCustomForm> {
       setState(() {
 
       });
-      /* String? token = await SharedPreference().getStringFromSharedPreferences("token");
-    print(token);
-    //const String tocken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbmRlZXAua2lyYW5AZ2xvYmFsLWNzZy5jb20iLCJpYXQiOjE3MDU1NjA5NzN9.jVqyyJw6gcLJJCS554HwOHOAPtfZ1Ve3jnv5LMEnNEQ";
-    //const String API_URL = "http://172.16.116.65:8001/api/v1/user/user-login";
-    final Uri uri = Uri.parse(ApiStrings.baseUrl+ ApiStrings.endpoint_get_all_activity);
-    Map<String, String> headers = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer ${token}'
-    };
-    const Map<String, dynamic> body = {
-      "pageNumber": 1,
-      "limit": 100
-    };
-    http.Response response = await http.put(uri,
-        headers: headers, body: jsonEncode(body));
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = json.decode(response.body)["Friction"];
-      print("Response Success");
-      print(response.statusCode);
-      print(data["message"]);
-      //print(data["data"]);
-      //print(data[0]);
-
-      for(var data in data["data"]){
-        activityDataList.add(ActivityData.fromJson(data));
-      }
-      for(var item in activityDataList){
-        serviceTechList.add(item.ServiceTechEmail!);
-      }
-      //print(activityDataList.toString());
-      */ /*for(var value in activityDataList) {
-        var items = ItemData(ID: value.ActivityTypeSerialId.toString(),
-          serviceTech: value.ServiceTechEmail.toString(),
-          activityType: value.ActivityType.toString(),);
-
-          print(items.toString());
-
-      */ /**/ /* itemList.add(ItemData(ID: value.ActivityTypeSerialId.toString(),
-       serviceTech: value.ServiceTechEmail.toString(),
-         activityType: value.ActivityType.toString(),
-       ));
-       //itemList.add(item);*/ /**/ /*
-
-      }*/ /*
-      */ /*{
-        lastCreatedServiceId = activityDataList[0].ActivityTypeSerialId;
-        lastCreatedActivityEmail = activityDataList[0].ServiceTechEmail;
-      }*/ /*
-      setState(() {
-      });
-      print ("activityDataList" + activityDataList.toString());
-      print ("serviceTechList" + serviceTechList.toString());
-      //print("itemList:" + itemList.toString() );
-    } else {
-      print("Response Failure");
-    }
-  }*/
     }
       );
         }
