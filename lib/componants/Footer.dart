@@ -47,7 +47,7 @@ class Footer extends StatelessWidget {
             ),
             InkWell(
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationEm()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
               },
               child: Column(
                 children: [

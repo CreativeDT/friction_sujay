@@ -121,7 +121,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                                 ldText: 'Select Service Tech*',
                                 sdIconPath: 'assets/icons/profile/down.png',
                               ),
-                              CustomDropDown(),
                               InputDropDownItem(hdText: '',
                                 ldText: 'Select Est Work Start Date with time*',
                                 sdIconPath: 'assets/icons/menu/Calendar.png',
@@ -150,10 +149,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                 ldText: 'Select Activity Type*',
                                 sdIconPath: 'assets/icons/profile/down.png',
                               ),
-                              InputDropDownItem(hdText: '',
-                                ldText: 'Select Helper',
-                                sdIconPath: 'assets/icons/profile/down.png',
-                              ),
+                              CustomDropDown(),
                               Container(
                                 margin: EdgeInsets.only(bottom: 5),
                                 height: 70,
@@ -237,9 +233,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                                     flex: 1,
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        showGreenWidget = false;
-                                        showRedWidget = false;
-                                        if (_formKey.currentState!.validate() == false) {
+                                        //showGreenWidget = false;
+                                       // showRedWidget = false;
+                                        if (_formKey.currentState!.validate()) {
                                           addActivity();
                                           setState(() {
                                           });
@@ -339,6 +335,7 @@ addActivity() async {
         startTimer(3);
 
       } else {
+        print(response.statusCode);
         print("Response Failure");
         setState(() {
           showRedWidget = true;
@@ -395,6 +392,7 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
           return TextFormField(
             controller: controller,
             focusNode: focusNode,
+            readOnly: true,
             onChanged: (value){
               //SystemChannels.textInput.invokeMethod('TextInput.hide');
 
@@ -507,13 +505,13 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
    setInputData(String ldText, TextEditingController typeAheadController) {
     switch(ldText){
       case 'Select Service Tech*':
-        _activityRequestData.serviceTechId = typeAheadController.text;
+        _activityRequestData.serviceTechId = "1";
       case 'Select Est Work Start Date with time*':
         _activityRequestData.estimatedWorkStartDate = typeAheadController.text;
       case 'Select Est Work End Date with time*':
         _activityRequestData.estimatedWorkEndDate = typeAheadController.text;
       case 'Select Rail Line':
-        _activityRequestData.railUnitLocationId = typeAheadController.text;
+        _activityRequestData.railUnitLocationId = "1";
       case 'Select Activity Type*':
       _activityRequestData.activityTypeId = typeAheadController.text;
       default:
@@ -532,47 +530,109 @@ class CustomDropDown extends StatefulWidget {
 }
 
 class _CustomDropDownState extends State<CustomDropDown> {
+  final TextEditingController _customDropDownController = TextEditingController();
   final List<String> items = [
-    'Item1',
-    'Item2',
-    'Item3',
-    'Item4',
+    'Helper 1',
+    'Helper 2',
+    'Helper 3',
+    'Helper 4',
   ];
   String? selectedValue;
+  List<String> selectedItems = [];
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      height: 33,
+      width: 350,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: Color.fromRGBO(175, 175, 175, 1))
+        ),
+
         child: DropdownButtonHideUnderline(
           child: DropdownButton2<String>(
             isExpanded: true,
+
             hint: Text(
-              'Select Item',
+              'Select Helper',
               style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).hintColor,
               ),
             ),
-            items: items
-                .map((String item) => DropdownMenuItem<String>(
-              value: item,
-              child: Text(
-                item,
-                style: const TextStyle(
-                  fontSize: 14,
+            items: items.map((item) {
+              return DropdownMenuItem(
+                value: item,
+                //disable default onTap to avoid closing menu when selecting an item
+                enabled: true,
+                child: StatefulBuilder(
+                  builder: (context, menuSetState) {
+                    final isSelected = selectedItems.contains(item);
+                    return InkWell(
+                      onTap: () {
+                        isSelected ? selectedItems.remove(item) : selectedItems.add(item);
+                        //This rebuilds the StatefulWidget to update the button's text
+                        setState(() {
+                        });
+                        //This rebuilds the dropdownMenu Widget to update the check mark
+                        menuSetState(() {});
+                      },
+                      child: Container(
+                        height: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Row(
+                          children: [
+                            if (isSelected)
+                              const Icon(Icons.check_box_outlined)
+                            else
+                              const Icon(Icons.check_box_outline_blank),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                item,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ))
-                .toList(),
-            value: selectedValue,
+              );
+            }).toList(),
+            value: selectedItems.isEmpty ? null : selectedItems.last,
+
             onChanged: (String? value) {
-              setState(() {
-                selectedValue = value;
-              });
             },
+            selectedItemBuilder: (context) {
+             return items.map(
+                  (item) {
+                return Container(
+                   child: Text(
+                     selectedItems.join(', '),
+                     style: const TextStyle(
+                      fontSize: 14,
+                    overflow: TextOverflow.ellipsis,
+                   ),
+                  maxLines: 1,
+                   ),
+                 );
+                },
+              ).toList();
+             },
+
+
+
+
+
             buttonStyleData: const ButtonStyleData(
               padding: EdgeInsets.symmetric(horizontal: 16),
               height: 40,
-              width: 140,
+              width: 375,
             ),
             menuItemStyleData: const MenuItemStyleData(
               height: 40,

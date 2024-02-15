@@ -1,5 +1,5 @@
 class ApiStrings {
-  static const String baseUrl = 'http://172.16.116.137:8005/api/v1';
+  static const String baseUrl = 'http://172.16.116.151:8005/api/v1';
   //static const String baseUrl = 'http://172.16.116.65:8001/api/v1';
   static const String endpiont_login = '/user/user-login';
   static const String endpoint_create_activity = '/activity/add-activity';

@@ -16,6 +16,7 @@ import 'package:friction/componants/updateActivity.dart';
 import 'package:friction/componants/uploadHistory.dart';
 import 'package:friction/data/ApiService.dart';
 import 'package:friction/data/model/UserProfile.dart';
+import 'package:friction/login.dart';
 
 import 'componants/testPage.dart';
 
@@ -115,207 +116,240 @@ class _HomeState extends State<Home> {
                     )
                   ],
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/activities.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Activities',
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/activities.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Activities',
+                        style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
+                            fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                            letterSpacing: 1,
+                            fontFamily: 'WorkSans'),
+                    ),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => showActivity()));
+                      // Handle option 1
+                    },
+                  ),
+                ),
+                Container(
+                  color: Colors.black,
+                  width: double.infinity,
+                  height: 0.1,
+                ),
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/upload.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Upload Histories',
+                        style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1,
+                      fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option 2
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => uploadHistory()));
+                    },
+                  ),
+                ),
+                Container(
+                  color: Colors.black,
+                  width: double.infinity,
+                  height: 0.1,
+                ),
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/archive-book.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Amended Histories',
                       style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
                           fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 1,
-                          fontFamily: 'WorkSans'),
+                          fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option 3
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => amendedHistory()));
+                    },
                   ),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => showActivity()));
-                    // Handle option 1
-                  },
                 ),
                 Container(
                   color: Colors.black,
                   width: double.infinity,
                   height: 0.1,
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/upload.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Upload Histories',
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/calendar-edit.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Daily Logs',
                       style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 1,
-                    fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option 2
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => uploadHistory()));
-                  },
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                          fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option 4
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => dailyLogs()));
+                    },
+                  ),
                 ),
                 Container(
                   color: Colors.black,
                   width: double.infinity,
                   height: 0.1,
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/archive-book.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Amended Histories',
-                    style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option 3
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => amendedHistory()));
-                  },
-                ),
                 Container(
-                  color: Colors.black,
-                  width: double.infinity,
-                  height: 0.1,
-                ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/calendar-edit.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Daily Logs',
-                    style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option 4
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => dailyLogs()));
-                  },
-                ),
-                Container(
-                  color: Colors.black,
-                  width: double.infinity,
-                  height: 0.1,
-                ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/routing.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Rail Unit locations',
-                    style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option 6
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => railUnits()));
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/routing.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Rail Unit locations',
+                      style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                          fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option 6
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => railUnits()));
 
-                  },
+                    },
+                  ),
                 ),
                 Container(
                   color: Colors.black,
                   width: double.infinity,
                   height: 0.1,
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/downloads.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Downloads',
-                    style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option 6
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => downloadPage()));
-                  },
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/downloads.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Downloads',
+                      style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                          fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option 6
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => downloadPage()));
+                    },
+                  ),
                 ),
                 Container(
                   color: Colors.black,
                   width: double.infinity,
                   height: 0.1,
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/note.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Daily Punch Report',
-                    style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option 2
-                  },
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/note.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Daily Punch Report',
+                      style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                          fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option 2
+                    },
+                  ),
                 ),
                 Container(
                   color: Colors.black,
                   width: double.infinity,
                   height: 0.1,
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/medal-star.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Preferences',
-                    style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option 2
-                  },
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/medal-star.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Preferences',
+                      style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                          fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option 2
+                    },
+                  ),
                 ),
                 Container(
                   color: Colors.black,
                   width: double.infinity,
                   height: 0.1,
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/notification.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Send Notifications',
-                    style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option 2
-                  },
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/notification.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Send Notifications',
+                      style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                          fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option 2
+                    },
+                  ),
                 ),
                 Container(
                   color: Colors.black,
                   width: double.infinity,
                   height: 0.1,
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/bookmark.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('My Bookmarks',
-                    style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option 2
-                  },
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/bookmark.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('My Bookmarks',
+                      style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                          fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option 2
+                    },
+                  ),
                 ),
                 Container(
                   color: Colors.black,
                   width: double.infinity,
                   height: 0.1,
                 ),
-                ListTile(
-                  leading: Image.asset('assets/icons/menu/logout.png'),
-                  trailing: Image.asset('assets/icons/list/arrowright2.png'),
-                  title: Text('Logout',
-                    style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'WorkSans'),),
-                  onTap: () {
-                    // Handle option logout
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => testPage()));
-                  },
+                Container(
+                  height: 50,
+                  child: ListTile(
+                    leading: Image.asset('assets/icons/menu/logout.png'),
+                    trailing: Image.asset('assets/icons/list/arrowright2.png'),
+                    title: Text('Logout',
+                      style: TextStyle(color: Color.fromRGBO(69, 69, 69, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          fontFamily: 'WorkSans'),),
+                    onTap: () {
+                      // Handle option logout
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                    },
+                  ),
                 ),
                 Container(
                   color: Colors.black,

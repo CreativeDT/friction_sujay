@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:friction/componants/ActivityData.dart';
 import 'package:friction/componants/showActivity.dart';
@@ -79,7 +80,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   ),
                   Container(
                     margin: EdgeInsets.all(10.0),
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                     decoration:BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.white,
@@ -113,22 +114,19 @@ class MyCustomFormState extends State<MyCustomForm> {
                           ldText: 'Enter Subdivision',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: '',
+                        InputDropDownItem(hdText: widget.dataForm.MileageStart!,
                           ldText: 'Mile Post',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: '',
+                        InputDropDownItem(hdText: widget.dataForm.ActivityType!,
                           ldText: 'Select Activity Type*',
                           sdIconPath: 'assets/icons/profile/down.png',
                         ),
-                        InputDropDownItem(hdText: '',
-                          ldText: 'Select Helper',
-                          sdIconPath: 'assets/icons/profile/down.png',
-                        ),
+                        CustomDropDown(),
                         Container(
                           margin: EdgeInsets.only(bottom: 5),
                           height: 70,
-                          width: 350,
+                          width: 400,
                           color: Color.fromRGBO(245, 245, 245, 1),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -183,30 +181,49 @@ class MyCustomFormState extends State<MyCustomForm> {
                         ),
                         Row(
                           children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-                              },
-                              child: const Text('Cancel'),
+
+                            SizedBox(width: 10,),
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 1),
+                                ),
+                                child: const Text('Cancel',
+                                  style: TextStyle(color: Color.fromRGBO(26, 179, 148, 1), fontSize: 14,
+                                      fontWeight: FontWeight.w600,letterSpacing: 1,fontFamily: 'WorkSans'),),
+                              ),
                             ),
                             SizedBox(width: 10,),
 
-                            ElevatedButton(
-                              onPressed: () {
-                                showBlueWidget = false;
-                                showRedWidget = false;
-                                if (_formKey.currentState!.validate()) {
-                                  updateActivity();
-                                  setState(() {
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  showBlueWidget = false;
+                                  showRedWidget = false;
+                                  if (_formKey.currentState!.validate()) {
+                                    updateActivity();
+                                    setState(() {
 
-                                  });
-                                  /*ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Processing Data')),
-                                  );*/
-                                }
-                              },
-                              child: const Text('Update Activity'),
+                                    });
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color.fromRGBO(26, 179, 148, 1),
+                                  foregroundColor: Colors.white,
+                                  side: BorderSide(color: Color.fromRGBO(26, 179, 148, 1), width: 5),
+                                ),
+                                child: const Text('Update Activity',
+                                  style: TextStyle(color: Colors.white, fontSize: 14,
+                                      fontWeight: FontWeight.w600,letterSpacing: 1,fontFamily: 'WorkSans'),),
+                              ),
                             ),
+                            SizedBox(width: 10,),
 
                           ],
                         ),
@@ -303,6 +320,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       "createdById": "1"
     };
     //Uri.parse(API_URL)
+    print("Body --- ${body}");
     http.Response response = await http.put(uri,
         headers: headers, body: jsonEncode(body));
 
@@ -387,11 +405,18 @@ class InputDropDownItem extends StatefulWidget {
 
 class _InputDropDownItemState extends State<InputDropDownItem> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  //bool cannotChange = false;
 
   final TextEditingController _typeAheadController = TextEditingController();
   @override
   void initState() {
     _typeAheadController.text = widget.hdText;
+    setState(() {
+      /*if(widget.hdText.isNotEmpty){
+        cannotChange = true;
+      }*/
+
+    });
     /*if(widget.ldText == 'Select Service Tech*') {
       _typeAheadController.text = widget.hdText;
     }*/
@@ -401,7 +426,7 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
   Widget build(BuildContext context) {
     return Container(
         height: 33,
-        margin: EdgeInsets.only(bottom: 14.0),
+        margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: TypeAheadField<String>(
           controller: _typeAheadController,
           hideWithKeyboard: false,
@@ -410,6 +435,7 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
             return TextFormField(
               controller: controller,
               focusNode: focusNode,
+              readOnly: true,
 
               // The validator receives the text that the user has entered.
 
@@ -440,7 +466,7 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
             );
           },
           itemBuilder: (context, suggestion) {
-            return Text(suggestion);
+            return widget.hdText.isNotEmpty? Container():Text(suggestion);
           },
           onSelected: (String value) {
             _typeAheadController.text = value;
@@ -456,12 +482,7 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
 
           },
           suggestionsCallback: (String search) {
-            return [
-              '1',
-              '2',
-              '3',
-              'a'
-            ];
+            return ['1','2', '3'];
           },
         )
 
@@ -470,25 +491,127 @@ class _InputDropDownItemState extends State<InputDropDownItem> {
   }
 }
 
+class CustomDropDown extends StatefulWidget {
+  const CustomDropDown({Key? key}) : super(key: key);
 
-class activityData {
-  int _serviceTech=1;
-  int _railLine=1;
+  @override
+  State<CustomDropDown> createState() => _CustomDropDownState();
+}
 
-  activityData();
+class _CustomDropDownState extends State<CustomDropDown> {
+  final TextEditingController _customDropDownController = TextEditingController();
+  final List<String> items = [
+    'Helper 1',
+    'Helper 2',
+    'Helper 3',
+    'Helper 4',
+  ];
+  String? selectedValue;
+  List<String> selectedItems = [];
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      height: 33,
+      width: 350,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: Color.fromRGBO(175, 175, 175, 1))
+      ),
 
-  int get serviceTech => _serviceTech;
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<String>(
+          isExpanded: true,
 
-  set serviceTech(int value) {
-    _serviceTech = value;
-  }
+          hint: Text(
+            'Select Helper',
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).hintColor,
+            ),
+          ),
+          items: items.map((item) {
+            return DropdownMenuItem(
+              value: item,
+              //disable default onTap to avoid closing menu when selecting an item
+              enabled: true,
+              child: StatefulBuilder(
+                builder: (context, menuSetState) {
+                  final isSelected = selectedItems.contains(item);
+                  return InkWell(
+                    onTap: () {
+                      isSelected ? selectedItems.remove(item) : selectedItems.add(item);
+                      //This rebuilds the StatefulWidget to update the button's text
+                      setState(() {
+                      });
+                      //This rebuilds the dropdownMenu Widget to update the check mark
+                      menuSetState(() {});
+                    },
+                    child: Container(
+                      height: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        children: [
+                          if (isSelected)
+                            const Icon(Icons.check_box_outlined)
+                          else
+                            const Icon(Icons.check_box_outline_blank),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }).toList(),
+          value: selectedItems.isEmpty ? null : selectedItems.last,
 
-  int get railLine => _railLine;
+          onChanged: (String? value) {
+          },
+          selectedItemBuilder: (context) {
+            return items.map(
+                  (item) {
+                return Container(
+                  child: Text(
+                    selectedItems.join(', '),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 1,
+                  ),
+                );
+              },
+            ).toList();
+          },
 
-  set railLine(int value) {
-    _railLine = value;
+
+
+
+
+          buttonStyleData: const ButtonStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            height: 40,
+            width: 375,
+          ),
+          menuItemStyleData: const MenuItemStyleData(
+            height: 40,
+          ),
+        ),
+      ),
+    );
   }
 }
+
 
 
 
